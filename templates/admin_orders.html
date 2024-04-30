@@ -1,0 +1,25 @@
+{% extends "base_admin.html" %}
+
+{% block admincontent %}
+<br>
+<div>
+    <table>
+        <tr>
+            <th>Адрес</th>
+            <th>Стоимость</th>
+            <th>Дата</th>
+            <th>Товары</th>
+            <th>Статус</th>
+        </tr>
+        {% for order in orders %}
+        <tr>
+            <td>{{ order.address }}</td>
+            <td>{{ order.cost }}₽</td>
+            <td>{{ order.created_date }}</td>
+            <td>{{ order.content }}</td>
+            <td>{{ order.status }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

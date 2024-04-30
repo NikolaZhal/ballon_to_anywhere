@@ -1,0 +1,23 @@
+{% extends "base_admin.html" %}
+
+{% block admincontent %}
+<br>
+<div>
+    <table>
+        <tr>
+            <th>Имя</th>
+            <th>email</th>
+            <th>Дата</th>
+            <th>Корзина</th>
+        </tr>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.name }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.created_date }}</td>
+            <td>{{ user.basket }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

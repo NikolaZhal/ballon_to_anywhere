@@ -1,0 +1,8 @@
+{
+  "FROM": "f0rcla4sh@yandex.ru",
+  "PASSWORD" : "uyehbkamfiwjyszm",
+  "E_HOST" : "smtp.yandex.ru",
+  "E_PORT": 465,
+  "TOCKEN":"6300545224:AAG6I4VsDl-iWJJAWrXBL4g8xlyq4RjZClo"
+
+}

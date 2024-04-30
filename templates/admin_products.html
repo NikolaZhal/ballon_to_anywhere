@@ -1,0 +1,48 @@
+{% extends "base_admin.html" %}
+
+{% block admincontent %}
+<div>
+    {% if current_user.is_authenticated %}
+    <a href="/admin/product" class="btn btn-secondary">Добавить товар</a>
+    {% endif %}
+</div>
+<br>
+<div>
+    <table>
+        <tr>
+            <th>Фото</th>
+            <th>Название</th>
+            <th>Стоимость</th>
+            <th>Удалить</th>
+            <th>Редактировать</th>
+        </tr>
+        {% for product in products %}
+        <tr>
+
+            <input type="text" value="{{ product.title }}" name="productRemTitle" style="display: none">
+            <td id="imgTd">
+                {% if product.img%}
+                <img src="../static/img/products/{{product.img[0]}}" class="admin-img-delete"
+                     alt="404 картинка не нашлась(">
+                {%else%}
+                <img class="admin-img-delete" src="../static/img/products/none.jpg"
+                     alt="404 картинка не нашлась("/>
+                {%endif%}
+            </td>
+            <td>{{ product.title }}</td>
+            <td>{{ product.cost }}₽</td>
+            <td>
+                <button type="submit" onclick="show_me({{product.id}}, 'products');" class="delete-button">
+                    <!--                        <img-->
+                    <!--                            src="{{ url_for('static', filename='../static/img/system/admin_del_item.png') }}"-->
+                    <!--                            style="width: 5vh; height: 5vh; border-radius: 20px;"></button>-->
+                </button>
+            </td>
+            <td>
+                <a href="/admin/product/{{product.id}}" class="btn btn-secondary">редактировать товар</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="alert alert-danger" role="alert"><h1>Вам не хватает прав!</h1></div>
+{% endblock %}
+<h1>Добавить картинку</h1>
+<form action="/galery" method="post" name="simple" enctype="multipart/form-data">
+    <!-- <p>
+       Upload a file
+         {{form.fileName()}}
+     </p> -->
+    <input type="file" id="file" name="file" accept="image/*" class="btn btn-primary mb-3" required>
+
+    <p><input type="submit" value="Подтвердить" class="btn btn-primary mb-3"></p>
+
+    <!-- <div class="form-group">
+        <label for="photo">Приложите фотографию</label>
+        <input type="file" class="form-control-file" id="photo" name="file">
+    </div> -->
+</form>

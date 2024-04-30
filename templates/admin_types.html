@@ -1,0 +1,44 @@
+{% extends "base_admin.html" %}
+
+{% block admincontent %}
+<div>
+    <form action="" method="post" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <div>
+            {{ form.csrf_token }}
+        </div>
+        <nav>
+            <div>
+                {{ form.title.label() }}
+                {{ form.title(class="form-control")}}
+                {% for error in form.title.errors %}
+                <div class="error">{{ error }}</div>
+                {% endfor %}
+                {{ form.submit(type="submit", class="btn btn-primary") }}
+            </div>
+        </nav>
+
+    </form>
+</div>
+<br>
+<div>
+    <table>
+        <tr>
+            <th>id</th>
+            <th>Тип</th>
+            <th>Изменение</th>
+        </tr>
+        {% for type in types %}
+        <tr>
+            <td>{{ type.id }}</td>
+            <td>{{ type.title }}</td>
+            <td>
+                <form action="" method="post" enctype="multipart/form-data">
+                    <input type="text" id="{{ type.id }}" name="{{ type.id }}"/>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}
