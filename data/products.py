@@ -13,6 +13,7 @@ class Products(SqlAlchemyBase, SerializerMixin):
     id = sqlalchemy.Column(sqlalchemy.Integer,
                            primary_key=True, autoincrement=True)
     title = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    color = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     description = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     type = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("types.id"))
     sale = sqlalchemy.Column(sqlalchemy.String, nullable=True)
@@ -21,6 +22,8 @@ class Products(SqlAlchemyBase, SerializerMixin):
     remains = sqlalchemy.Column(sqlalchemy.Integer, nullable=True)
     img = sqlalchemy.Column(sqlalchemy.String, default='none.jpg')
     type_relation = orm.relationship('Types')
+    product_group_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("product_group.id"))
+    product_group = orm.relationship('ProductsGroup')
 
     def __repr__(self):
         return f'<products> {self.id} {self.title}'

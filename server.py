@@ -18,6 +18,7 @@ from bot import send_info
 from data import db_session
 from data.orders import Order
 from data.products import Products
+from data.products_group import ProductGroup
 from data.types import Types
 from data.users import User
 from email_sender import send_email
@@ -58,12 +59,6 @@ def index():
     for product in products:
         if product.img:
             product.img = product.img.split(', ')
-    # if current_user.is_authenticated:
-    # news = db_sess.query(Products).filter(
-    #     (Products.user == current_user) | (Products.is_private != True))
-    # else:
-    # news = db_sess.query(Products).filter(Products.is_private != True)
-
     session['basket'] = {}
     return render_template('index.html', products=products)
 
@@ -154,7 +149,11 @@ def add_product():
     types_data = []
     for i in types:
         types_data.append((i.id, i.title))
-    form = ProductForm(data=types_data)
+    types = db_sess.query(Types).all()
+    types_data = []
+    for i in types:
+        types_data.append((i.id, i.title))
+    form = ProductForm(types=types_data, prduct_group=[])
     # if request.method == 'POST':
     if form.validate_on_submit():
         filenames = ['']
@@ -222,7 +221,7 @@ def edit_product(id):
         if product.img:
             for elem in product.img:
                 choises.append((elem, elem))
-        form = ProductForm(data=types_data, imgs_data=all_imgs, type=int(product.type))
+        form = ProductForm(types=types_data, imgs_data=all_imgs, type=int(product.type))
     if request.method == "GET":
         if product:
             form.title.data = product.title
@@ -431,8 +430,8 @@ def main():
     # port = int(os.environ.get("PORT", 5000))
     port = 5000
     app.register_blueprint(products_api.blueprint)
-    # app.run(host='0.0.0.0', port=port, debug=True)
-    serve(app, host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=port, debug=True)
+    # serve(app, host='0.0.0.0', port=port)
 
 
 if __name__ == '__main__':
