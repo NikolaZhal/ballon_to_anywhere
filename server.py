@@ -61,6 +61,7 @@ def index():
             product.img = product.img.split(', ')
     session['basket'] = {}
     return render_template('index.html', products=products)
+
 @app.route('/product/<int:product_id>', methods=['GET', 'POST'])
 def show_product():
     return
@@ -145,19 +146,21 @@ def remove_item(type, id):
 @app.route('/admin/product', methods=['GET', 'POST'])
 def add_product():
     data = []
+
     db_sess = db_session.create_session()
     types = db_sess.query(Types).all()
     types_data = []
     for i in types:
         types_data.append((i.id, i.title))
-    groups = db_sess.query(ProductGroup).all()
-    groups_data = []
-    for i in groups:
-        groups.append((i.id, i.title))
-    form = ProductForm(types=types_data, prduct_group=groups_data)
+    types = db_sess.query(Types).all()
+    types_data = []
+    for i in types:
+        types_data.append((i.id, i.title))
+    form = ProductForm(types=types_data, prduct_group=[])
     # if request.method == 'POST':
     if form.validate_on_submit():
         filenames = ['']
+
         # добавление продукта
         product = Products()
         product.title = form.title.data
