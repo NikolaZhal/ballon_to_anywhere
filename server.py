@@ -58,15 +58,12 @@ def index():
     for product in products:
         if product.img:
             product.img = product.img.split(', ')
-    # if current_user.is_authenticated:
-    # news = db_sess.query(Products).filter(
-    #     (Products.user == current_user) | (Products.is_private != True))
-    # else:
-    # news = db_sess.query(Products).filter(Products.is_private != True)
-
     session['basket'] = {}
     return render_template('index.html', products=products)
 
+@app.route('/prduct_group/<int:product_id>', methods=['GET', 'POST'])
+def product_show(product_id):
+    return render_template('index.html')
 
 @app.route('/admin/types', methods=['GET', 'POST'])
 @login_required
