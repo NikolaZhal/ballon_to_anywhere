@@ -13,7 +13,8 @@ class ProductForm(FlaskForm):
     title = StringField('Название продукта', validators=[DataRequired()])
     description = TextAreaField('Описание продукта', validators=[DataRequired()])
     type = SelectField('Тип продукта', coerce=int, choices=[(0, '0')])
-    product_group = SelectField('Наименование группы товара', coerce=int, choices=[(0, '0')])
+    product_group = SelectField('Наименование группы товара', choices=[(-1, 'Создать новую группу')]
+                                )
     cost = StringField("Стоимость в рублях", validators=[DataRequired()])
     remains = StringField('Остаток продукта', validators=[DataRequired()])
     sale = StringField('Наличие скидки на старте (Скидка в %)', validators=[DataRequired()], default='0')
@@ -27,7 +28,7 @@ class ProductForm(FlaskForm):
     def __init__(self, *args, types=[(1, '1')], prduct_group=[], imgs_data=[], must_upload=True, **kwargs):
         super().__init__(*args, **kwargs)
         self.type.choices = types
-        self.product_group.choices = prduct_group
+        self.product_group.choices.extend(prduct_group)
         self.imgs.choices = imgs_data
         if not must_upload:
             self.img.validators = []
