@@ -62,6 +62,9 @@ def index():
     session['basket'] = {}
     return render_template('index.html', products=products)
 
+@app.route('/prduct_group/<int:product_id>', methods=['GET', 'POST'])
+def product_show(product_id):
+    return render_template('index.html')
 
 @app.route('/admin/types', methods=['GET', 'POST'])
 @login_required
