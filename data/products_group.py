@@ -13,6 +13,9 @@ class ProductGroup(SqlAlchemyBase, SerializerMixin):
     id = sqlalchemy.Column(sqlalchemy.Integer,
                            primary_key=True, autoincrement=True)
     title = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    description = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    type = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("types.id"))
+    type_relation = orm.relationship('Types')
     products_id = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     products = orm.relationship("Products", back_populates='product_group')
 

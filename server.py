@@ -145,7 +145,6 @@ def remove_item(type, id):
 @app.route('/admin/product', methods=['GET', 'POST'])
 def add_product():
     data = []
-
     db_sess = db_session.create_session()
     types = db_sess.query(Types).all()
     types_data = []
@@ -159,7 +158,6 @@ def add_product():
     # if request.method == 'POST':
     if form.validate_on_submit():
         filenames = ['']
-
         # добавление продукта
         product = Products()
         product.title = form.title.data
