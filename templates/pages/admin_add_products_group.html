@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Добавление продукта (цветовой группы)</h1>
+{{message}}
+<form action="" method="post" enctype="multipart/form-data">
+    <div>
+        {{ form.hidden_tag() }}
+    </div>
+    {% for field in form if field.name not in ['csrf_token', 'submit'] %}
+    <div>
+        {{ field.label() }}
+        {{ field(class="form-control")}}
+        {% for error in field.errors %}
+        <div class="error">{{ error }}</div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+    <br>
+    <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+</form>
+{% endblock %}
+

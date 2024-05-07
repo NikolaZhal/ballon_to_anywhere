@@ -12,10 +12,9 @@ class Products(SqlAlchemyBase, SerializerMixin):
 
     id = sqlalchemy.Column(sqlalchemy.Integer,
                            primary_key=True, autoincrement=True)
-    title = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    # title = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     color = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    sale = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    special_offer = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    sale = sqlalchemy.Column(sqlalchemy.Integer, nullable=True)
     cost = sqlalchemy.Column(sqlalchemy.Integer)
     remains = sqlalchemy.Column(sqlalchemy.Integer, nullable=True)
     img = sqlalchemy.Column(sqlalchemy.String, default='none.jpg')

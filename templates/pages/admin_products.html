@@ -1,4 +1,4 @@
-{% extends "base_admin.html" %}
+{% extends "pages/base_admin.html" %}
 
 {% block admincontent %}
 <div>
@@ -11,8 +11,10 @@
     <table>
         <tr>
             <th>Фото</th>
-            <th>Название</th>
+            <th>Название Группы</th>
+            <th>Цвет</th>
             <th>Стоимость</th>
+            <th>Скидка</th>
             <th>Удалить</th>
             <th>Редактировать</th>
         </tr>
@@ -29,8 +31,10 @@
                      alt="404 картинка не нашлась("/>
                 {%endif%}
             </td>
-            <td>{{ product.title }}</td>
+            <td>{{ product.product_group.title }}</td>
+            <td>{{ product.color }}</td>
             <td>{{ product.cost }}₽</td>
+            <td>{{ product.sale }}₽</td>
             <td>
                 <button type="submit" onclick="show_me({{product.id}}, 'products');" class="delete-button">
                     <!--                        <img-->

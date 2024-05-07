@@ -23,7 +23,7 @@ from data.types import Types
 from data.users import User
 from email_sender import send_email
 from forms.orders import BasketForm, MakeOrder
-from forms.products import ProductForm
+from forms.products import ProductForm, ProductGroupForm
 from forms.types import TypeForm
 from forms.user import RegisterForm, LoginForm, ConfirmationForm
 
@@ -60,7 +60,7 @@ def index():
         if product.img:
             product.img = product.img.split(', ')
     session['basket'] = {}
-    return render_template('index.html', products=products)
+    return render_template('pages/index.html', products=products)
 
 @app.route('/product/<int:product_id>', methods=['GET', 'POST'])
 def show_product():
@@ -92,7 +92,7 @@ def admin_types():
                 db_sess.commit()
                 # request.form[id] = ''
             return redirect('/admin/types')
-        return render_template('admin_types.html', title='Админ панель',
+        return render_template('pages/admin_types.html', title='Админ панель',
                                types=types, form=form)
 
 
@@ -102,7 +102,7 @@ def admin_user():
     if current_user.admin:
         db_sess = db_session.create_session()
         users = db_sess.query(User).all()
-        return render_template('admin_users.html', title='Админ панель',
+        return render_template('pages/admin_users.html', title='Админ панель',
                                users=users)
 
 
@@ -112,7 +112,7 @@ def admin_orders():
     if current_user.admin:
         db_sess = db_session.create_session()
         orders = db_sess.query(Order).all()
-        return render_template('admin_orders.html', title='Админ панель',
+        return render_template('pages/admin_orders.html', title='Админ панель',
                                orders=orders)
 
 
@@ -125,26 +125,24 @@ def admin_products():
         for product in products:
             if product.img:
                 product.img = product.img.split(', ')
-        return render_template('admin_products.html', title='Админ панель',
+        return render_template('pages/admin_products.html', title='Админ панель',
                                products=products)
     else:
-        return render_template('no_rights.html')
+        return render_template('pages/no_rights.html')
 
-
-@app.route('/remove_item/<string:type>/<int:id>', methods=['GET', 'POST'])
-def remove_item(type, id):
+@app.route('/admin/productsgroups', methods=['GET', 'POST'])
+@login_required
+def admin_productsgroup():
     if current_user.admin:
-        if type == 'products':
-            db_sess = db_session.create_session()
-            db_sess.query(Products).filter(Products.id == id).delete()
-            db_sess.commit()
-        return redirect('/admin/products')
+        db_sess = db_session.create_session()
+        productgroups = db_sess.query(ProductGroup).all()
+        return render_template('pages/admin_products_group.html', title='Админ панель',
+                               productgroups=productgroups)
     else:
-        return render_template('no_rights.html')
+        return render_template('pages/no_rights.html')
 
-
-@app.route('/admin/product', methods=['GET', 'POST'])
-def add_product():
+@app.route('/admin/add-productgroup', methods=['GET', 'POST'])
+def add_productgroup():
     data = []
 
     db_sess = db_session.create_session()
@@ -152,22 +150,33 @@ def add_product():
     types_data = []
     for i in types:
         types_data.append((i.id, i.title))
-    types = db_sess.query(Types).all()
-    types_data = []
-    for i in types:
-        types_data.append((i.id, i.title))
-    form = ProductForm(types=types_data, prduct_group=[])
-    # if request.method == 'POST':
+    form = ProductGroupForm(types=types_data)
     if form.validate_on_submit():
-        filenames = ['']
+        productgroup = ProductGroup()
+        productgroup.title = form.title.data
+        productgroup.description = form.description.data
+        productgroup.type = form.type.data
+        db_sess = db_session.create_session()
+        db_sess.add(productgroup)
+        db_sess.commit()
+        return redirect('/admin/productsgroups')
+    return render_template("pages/admin_add_products_group.html", data=data, form=form)
 
-        # добавление продукта
+
+
+@app.route('/admin/add_product', methods=['GET', 'POST'])
+def add_product():
+    db_sess = db_session.create_session()
+    prduct_groups = db_sess.query(ProductGroup).all()
+    prduct_groups_data = []
+    for i in prduct_groups:
+        prduct_groups_data.append((i.id, i.title))
+    form = ProductForm(prduct_group=prduct_groups_data)
+    if form.validate_on_submit():
         product = Products()
-        product.title = form.title.data
+        product.product_group_id = form.product_group.data
         product.description = form.description.data
-        product.type = form.type.data
         product.sale = int(form.sale.data)
-        product.special_offer = int(form.special_offer.data)
         product.cost = form.cost.data
         product.remains = form.remains.data
         product.img = str(form.img.data)
@@ -191,7 +200,7 @@ def add_product():
     mypath = "./static/img"
     onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
     data = {'change': '0'}
-    return render_template("add_product.html", data=data, form=form)
+    return render_template("pages/add_product.html", data=data, form=form)
 
 
 @app.route('/admin/product/<int:id>', methods=['GET', 'POST'])
@@ -270,10 +279,21 @@ def edit_product(id):
     db_sess = db_session.create_session()
     product = db_sess.query(Products).filter(Products.id == id).first()
     data = {'change': '1', 'img': product.img}
-    return render_template('add_product.html',
+    return render_template('pages/add_product.html',
                            title='Редактирование новости',
                            form=form, data=data
                            )
+
+@app.route('/remove_item/<string:type>/<int:id>', methods=['GET', 'POST'])
+def remove_item(type, id):
+    if current_user.admin:
+        if type == 'products':
+            db_sess = db_session.create_session()
+            db_sess.query(Products).filter(Products.id == id).delete()
+            db_sess.commit()
+        return redirect('/admin/products')
+    else:
+        return render_template('pages/no_rights.html')
 
 
 @app.route('/make_order', methods=['GET', 'POST'])
@@ -309,7 +329,7 @@ def user_make_order():
         send_info(
             f'{message}')
         return redirect('/')
-    return render_template('make_order.html', title='Заказ', form=form)
+    return render_template('pages/make_order.html', title='Заказ', form=form)
 
 
 def make_order_text(order):
@@ -348,10 +368,10 @@ def user_basket():
         if len(form.content.data):
             return redirect('/make_order')
         else:
-            return render_template('basket.html', title='Корзина', user=user, basket=basket, form=form,
+            return render_template('pages/basket.html', title='Корзина', user=user, basket=basket, form=form,
                                    message='Не выбрано ни одного товара')
     form.content.data = [key for key in basket]
-    return render_template('basket.html', title='Корзина', user=user, basket=basket, form=form)
+    return render_template('pages/basket.html', title='Корзина', user=user, basket=basket, form=form)
 
 
 @app.route('/logout')
@@ -370,10 +390,10 @@ def login():
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
             return redirect("/")
-        return render_template('login.html',
+        return render_template('pages/login.html',
                                message="Неправильный логин или пароль",
                                form=form)
-    return render_template('login.html', title='Авторизация', form=form)
+    return render_template('pages/login.html', title='Авторизация', form=form)
 
 
 @app.route('/confirmation', methods=['GET', 'POST'])
@@ -389,8 +409,8 @@ def confirmation():
             db_sess.commit()
             return redirect('/login')
         else:
-            return render_template('confirmation.html', title='Подтверждение', form=form, message='Неверный код')
-    return render_template('confirmation.html', title='Подтверждение', form=form)
+            return render_template('pages/confirmation.html', title='Подтверждение', form=form, message='Неверный код')
+    return render_template('pages/confirmation.html', title='Подтверждение', form=form)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -398,12 +418,12 @@ def reqister():
     form = RegisterForm()
     if form.validate_on_submit():
         if form.password.data != form.password_again.data:
-            return render_template('register.html', title='Регистрация',
+            return render_template('pages/register.html', title='Регистрация',
                                    form=form,
                                    message="Пароли не совпадают")
         db_sess = db_session.create_session()
         if db_sess.query(User).filter(User.email == form.email.data).first():
-            return render_template('register.html', title='Регистрация',
+            return render_template('pages/register.html', title='Регистрация',
                                    form=form,
                                    message="Такой пользователь уже есть")
         user = User(
@@ -414,17 +434,20 @@ def reqister():
         user.set_password(form.password.data)
         db_sess.add(user)
         db_sess.commit()
+        if user.id == 1:
+            user.admin = 1
+        db_sess.commit()
         password = ''
         for i in range(4):
             password += str(randint(0, 9))
         send_data = send_email(form.email.data, 'Ваш код подтверждения в Оксана.corparated', f'{password}')
         if not send_data[0]:
-            return render_template('register.html', title='Регистрация', form=form,
+            return render_template('pages/register.html', title='Регистрация', form=form,
                                    message='Возникла ошибка при отправке письма')
         password = generate_password_hash(password)
         session['user'] = {'id': user.id, 'email': form.email.data, 'password': password}
         return redirect('/confirmation')
-    return render_template('register.html', title='Регистрация', form=form)
+    return render_template('pages/register.html', title='Регистрация', form=form)
 
 
 def main():
