@@ -1,2 +1,8 @@
 /venv/
 /.venv/
+.idea
+__pycache__/
+forms/__pycache__/
+forms/__pycache__/orders.cpython-312.pyc
+forms/__pycache__/products.cpython-312.pyc
+data/__pycache__
