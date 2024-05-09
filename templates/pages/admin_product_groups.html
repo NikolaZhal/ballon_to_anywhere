@@ -13,6 +13,7 @@
             <th>Название</th>
             <th>Удалить</th>
             <th>Редактировать</th>
+            <th>Цвета</th>
         </tr>
         {% for productgroup in productgroups %}
         <tr>
@@ -26,6 +27,9 @@
             </td>
             <td>
                 <a href="/admin/edit-productgroup/{{productgroup.id}}" class="btn btn-secondary">редактировать товар</a>
+            </td>
+            <td>
+                <a href="/admin/products-productgroup/{{productgroup.id}}" class="btn btn-primary">Цвета</a>
             </td>
         </tr>
         {% endfor %}

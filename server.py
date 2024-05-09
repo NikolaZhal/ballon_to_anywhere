@@ -138,7 +138,7 @@ def admin_productsgroup():
     if current_user.admin:
         db_sess = db_session.create_session()
         productgroups = db_sess.query(ProductGroup).all()
-        return render_template('pages/admin_products_group.html', title='Админ панель',
+        return render_template('pages/admin_product_groups.html', title='Админ панель',
                                productgroups=productgroups)
     else:
         return render_template('pages/no_rights.html')
@@ -164,47 +164,6 @@ def add_productgroup():
         db_sess.commit()
         return redirect('/admin/productsgroups')
     return render_template("pages/admin_add_products_group.html", data=data, form=form)
-
-
-@app.route('/admin/add-product', methods=['GET', 'POST'])
-def add_product():
-    db_sess = db_session.create_session()
-    product_groups = db_sess.query(ProductGroup).all()
-    product_groups_data = []
-    for i in product_groups:
-        product_groups_data.append((i.id, i.title))
-    form = ProductForm(product_groups=product_groups_data)
-    if form.validate_on_submit():
-        if form.product_group.data == '-1':
-            return render_template("pages/add_product.html", data={'change': '0'}, form=form, title='добавление товара',
-                                   message='выберите группу товара')
-        product = Products()
-        product.product_group_id = form.product_group.data
-        product.color = form.color.data
-        product.sale = int(form.sale.data)
-        product.cost = int(form.cost.data)
-        product.remains = int(form.remains.data)
-        db_sess = db_session.create_session()
-        db_sess.add(product)
-        db_sess.commit()
-        if form.img.data[0].filename:
-            product_id = product.id
-
-            files_filenames = []
-            for i, file in enumerate(form.img.data):
-                data_filename = file.filename
-                data_filename = f"{product_id}_{i}_{datetime.now().date()}.{data_filename.split('.')[-1]}"
-                file.save(os.path.join('./static/img/products', data_filename))
-                files_filenames.append(data_filename)
-            db_sess = db_session.create_session()
-            product = db_sess.query(Products).filter(Products.id == product_id).first()
-            product.img = f'{", ".join(files_filenames)}'
-            db_sess.commit()
-        return redirect('/admin/products')
-
-    mypath = "./static/img"
-    data = {'change': '0'}
-    return render_template("pages/add_product.html", data=data, form=form, title='добавление товара')
 
 
 @app.route('/admin/edit-productgroup/<int:id>', methods=['GET', 'POST'])
@@ -247,13 +206,66 @@ def edit_product_group(id):
                            )
 
 
-@app.route('/admin/edit-product/<int:id>', methods=['GET', 'POST'])
+@app.route('/admin/products-productgroup/<int:group_id>')
+def products_in_group(group_id):
+    db_sess = db_session.create_session()
+    productgroup = db_sess.query(ProductGroup).filter(ProductGroup.id == group_id).first()
+    if not productgroup:
+        abort(404)
+    return render_template('pages/admin_product_in_products_group.html',
+                           title=f'Продукты {productgroup.title}',
+                           productgroup=productgroup
+                           )
+
+@app.route('/admin/add-product', methods=['GET', 'POST'])
+def add_product():
+    db_sess = db_session.create_session()
+    product_groups = db_sess.query(ProductGroup).all()
+    product_groups_data = []
+    for i in product_groups:
+        product_groups_data.append((i.id, i.title))
+    form = ProductForm(product_groups=product_groups_data)
+    if form.validate_on_submit():
+        if form.product_group.data == '-1':
+            return render_template("pages/add_product.html", data={'change': '0'}, form=form, title='добавление товара',
+                                   message='выберите группу товара')
+        product = Products()
+        product.product_group_id = form.product_group.data
+        product.color = form.color.data
+        product.sale = int(form.sale.data)
+        product.cost = int(form.cost.data)
+        product.remains = int(form.remains.data)
+        db_sess = db_session.create_session()
+        db_sess.add(product)
+        db_sess.commit()
+        if form.img.data[0].filename:
+            product_id = product.id
+
+            files_filenames = []
+            for i, file in enumerate(form.img.data):
+                data_filename = file.filename
+                data_filename = f"{product_id}_{i}_{datetime.now().date()}.{data_filename.split('.')[-1]}"
+                file.save(os.path.join('./static/img/products', data_filename))
+                files_filenames.append(data_filename)
+            db_sess = db_session.create_session()
+            product = db_sess.query(Products).filter(Products.id == product_id).first()
+            product.img = f'{", ".join(files_filenames)}'
+            db_sess.commit()
+        return redirect('/admin/products')
+
+    mypath = "./static/img"
+    data = {'change': '0'}
+    return render_template("pages/add_product.html", data=data, form=form, title='добавление товара')
+
+
+@app.route('/admin/edit-product/<int:product_id>/', defaults={'sender': -1}, methods=['GET', 'POST'])
+@app.route('/admin/edit-product/<int:product_id>/<string:sender>', methods=['GET', 'POST'])
 @login_required
-def edit_product(id):
+def edit_product(product_id, sender):
     mypath = "./static/img/products"
     onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
     all_imgs = list(
-        filter(lambda x: (x.endswith(".jpg") or x.endswith(".png")) and x.split('_')[0] == str(id), onlyfiles))
+        filter(lambda x: (x.endswith(".jpg") or x.endswith(".png")) and x.split('_')[0] == str(product_id), onlyfiles))
 
     max_img_number = 0
     if len(all_imgs):
@@ -266,7 +278,7 @@ def edit_product(id):
     for group in groups:
         groups_data.append(tuple([group.id, group.title]))
 
-    product = db_sess.query(Products).filter(Products.id == id).first()
+    product = db_sess.query(Products).filter(Products.id == product_id).first()
     if not product:
         abort(404)
     if product.img:
@@ -286,7 +298,7 @@ def edit_product(id):
         form.remains.data = product.remains
     if form.validate_on_submit():
         db_sess = db_session.create_session()
-        product = db_sess.query(Products).filter(Products.id == id).first()
+        product = db_sess.query(Products).filter(Products.id == product_id).first()
         if product:
             product.product_group_id = form.product_group.data
             product.color = form.color.data
@@ -299,7 +311,7 @@ def edit_product(id):
                 files_filenames = []
                 for i, file in enumerate(form.img.data, start=max_img_number):
                     data_filename = secure_filename(file.filename)
-                    data_filename = f"{id}_{i}_{datetime.now().date()}.{data_filename.split('.')[-1]}"
+                    data_filename = f"{product_id}_{i}_{datetime.now().date()}.{data_filename.split('.')[-1]}"
                     file.save(os.path.join('./static/img/products', data_filename))
                     files_filenames.append(data_filename)
                 if len(product.img):
@@ -307,13 +319,15 @@ def edit_product(id):
                 else:
                     product.img += f'{", ".join(files_filenames)}'
             db_sess.commit()
-
-            return redirect('/admin/products')
+            redirect_address = '/admin/products'
+            if sender != -1:
+                redirect_address = f'/admin/products-productgroup/{sender}'
+            return redirect(redirect_address)
             # return str(form.img.data)
         else:
             abort(404)
     db_sess = db_session.create_session()
-    product = db_sess.query(Products).filter(Products.id == id).first()
+    product = db_sess.query(Products).filter(Products.id == product_id).first()
     data = {'change': '1', 'img': product.img}
     return render_template('pages/add_product.html',
                            title='Редактирование товара',
