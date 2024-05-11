@@ -291,6 +291,15 @@ min-width: 50vw;
 display: block;
 justify-content: center;
 }
+.form-scale{
+  flex: 1;
+  max-width: 98vw;
+  justify-content: center;
+  display: block;
+     margin: 0 auto;
+     text-align: left;
+}
+
 
 body {
      margin: 0;

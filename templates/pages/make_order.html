@@ -7,7 +7,7 @@
     <div>
         {{ form.csrf_token }}
     </div>
-    {% for field in form if field.name not in ['csrf_token', 'submit'] %}
+    {% for field in form if field.name not in ['csrf_token', 'submit', 'how_pay'] %}
     <div>
         {{ field.label() }}
         {{ field(class="form-control")}}
@@ -16,6 +16,8 @@
         {% endfor %}
     </div>
     {% endfor %}
+            {{ form.how_pay.label() }}
+        {{ form.how_pay()}}
     <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
     {{message}}
 </form>

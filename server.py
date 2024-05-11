@@ -59,7 +59,7 @@ def index():
     for product in products:
         if product.img:
             product.img = product.img.split(', ')
-    return render_template('pages/index.html', products=products)
+    return render_template('pages/index.html', products=products, view='cube')
 
 
 @app.route('/product/<int:product_id>', methods=['GET', 'POST'])
@@ -212,19 +212,25 @@ def products_in_group(group_id):
     productgroup = db_sess.query(ProductGroup).filter(ProductGroup.id == group_id).first()
     if not productgroup:
         abort(404)
+    for product in productgroup.products:
+        product.img = product.img.split(', ')
     return render_template('pages/admin_product_in_products_group.html',
                            title=f'Продукты {productgroup.title}',
                            productgroup=productgroup
                            )
 
-@app.route('/admin/add-product', methods=['GET', 'POST'])
-def add_product():
+
+@app.route('/admin/add-product/', defaults={'sender': -1}, methods=['GET', 'POST'])
+@app.route('/admin/add-product/<int:sender>', methods=['GET', 'POST'])
+def add_product(sender):
     db_sess = db_session.create_session()
     product_groups = db_sess.query(ProductGroup).all()
     product_groups_data = []
     for i in product_groups:
         product_groups_data.append((i.id, i.title))
     form = ProductForm(product_groups=product_groups_data)
+    if request.method == "GET" and sender != -1:
+        form.product_group.data = int(sender)
     if form.validate_on_submit():
         if form.product_group.data == '-1':
             return render_template("pages/add_product.html", data={'change': '0'}, form=form, title='добавление товара',
@@ -251,7 +257,10 @@ def add_product():
             product = db_sess.query(Products).filter(Products.id == product_id).first()
             product.img = f'{", ".join(files_filenames)}'
             db_sess.commit()
-        return redirect('/admin/products')
+        redirect_address = '/admin/products'
+        if sender != -1:
+            redirect_address = f'/admin/products-productgroup/{sender}'
+        return redirect(redirect_address)
 
     mypath = "./static/img"
     data = {'change': '0'}
@@ -259,7 +268,7 @@ def add_product():
 
 
 @app.route('/admin/edit-product/<int:product_id>/', defaults={'sender': -1}, methods=['GET', 'POST'])
-@app.route('/admin/edit-product/<int:product_id>/<string:sender>', methods=['GET', 'POST'])
+@app.route('/admin/edit-product/<int:product_id>/<int:sender>', methods=['GET', 'POST'])
 @login_required
 def edit_product(product_id, sender):
     mypath = "./static/img/products"
