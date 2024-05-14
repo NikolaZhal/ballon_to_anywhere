@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<nav class="navbar navbar-light bg-light title-width">
+    <h1>Ваша корзинка</h1>
+    <a href="/index" class="btn btn-success"> На главную </a>
+</nav>
+<div>
+
+
+    <form action="" method="post" class="form-width">
+        <p>{{ form.submit(type="submit", class="btn btn-primary", align="right") }}</p>
+        {{ form.hidden_tag() }}
+
+        <div class="menu">
+
+
+        </div>
+    </form>
+
+
+
+</div>
+
+{% endblock %}

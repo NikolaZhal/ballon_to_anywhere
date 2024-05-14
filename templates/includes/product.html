@@ -3,10 +3,10 @@
 {%else%}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/product_style.css') }}">
 {%endif%}
-<div class="product">
-    <div class="product-img">
+<div class="product menu-item">
+    <div class="product-img menu-item-image">
         {% if product.img[0]%}
-        <div id="carousel{{product.id}}" class="carousel slide">
+        <div id="carousel{{product.id}}" class="carousel slide" data-bs-ride="false">
             <div class="carousel-inner">
                 <div class="carousel-item active">
                     <img class="d-block menu-item-image" src="../static/img/products/{{product.img[0]}}"

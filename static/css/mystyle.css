@@ -101,12 +101,14 @@ th {
 
 .menu-item {
     width: 30vh;
+    height: 30vh;
     margin: 20px 5px;
     text-align: center;
     background-color: var(--thirdly-color);
     position: relative;
     /* transition: 0.75s; */
     border-radius: 20px;
+    flex-basis: content;
 }
 /*
 .menu-item:hover {

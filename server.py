@@ -59,12 +59,12 @@ def index():
     for product in products:
         if product.img:
             product.img = product.img.split(', ')
-    return render_template('pages/index.html', products=products, view='cube')
+    return render_template('pages/index.html', products=products, view='nocube')
 
 
-@app.route('/product/<int:product_id>', methods=['GET', 'POST'])
-def show_product():
-    return
+@app.route('/product/<int:product_group_id>/<int:product_id>', methods=['GET', 'POST'])
+def show_product(product_group_id, product_id):
+    return render_template('pages/show_product.html', title=propd)
 
 
 @app.route('/admin/types', methods=['GET', 'POST'])
