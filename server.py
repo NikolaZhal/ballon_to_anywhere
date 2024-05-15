@@ -110,7 +110,7 @@ def admin_user():
 @app.route('/admin/orders', methods=['GET', 'POST'])
 @login_required
 def admin_orders():
-    if current_user.admin:
+    if current_user.admin: 
         db_sess = db_session.create_session()
         orders = db_sess.query(Order).all()
         return render_template('pages/admin_orders.html', title='Админ панель',
