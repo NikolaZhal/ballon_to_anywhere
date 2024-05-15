@@ -15,4 +15,4 @@ class Types(SqlAlchemyBase):
     products = orm.relationship("ProductGroup", back_populates='type_relation')
 
     def __repr__(self):
-        return f'<type> {self.id} {self.name}'
+        return f'<type> {self.id} {self.title}'

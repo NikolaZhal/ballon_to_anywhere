@@ -51,20 +51,46 @@ def load_user(user_id):
     return db_sess.query(User).get(user_id)
 
 
-@app.route("/", methods=['GET', 'POST'])
-@app.route("/index", methods=['GET', 'POST'])
-def index():
+@app.route("/", methods=['GET'])
+@app.route("/index", methods=['GET'])
+def index_get():
+    search = request.args.get("search", default="sample", type=str)
     db_sess = db_session.create_session()
-    products = db_sess.query(Products).all()
-    for product in products:
-        if product.img:
-            product.img = product.img.split(', ')
-    return render_template('pages/index.html', products=products, view='nocube')
+    types = db_sess.query(Types).all()
+    for type in types:
+        for product in type.products:
+            for product_color in product.products:
+                if product_color.img:
+                    product_color.img = product_color.img.split(', ')
+    return render_template('pages/index.html', types=types, view='nocube')
 
+@app.route("/", methods=['POST'])
+@app.route("/index", methods=['POST'])
+def index_post():
+    search = request.form.get("search")
+    db_sess = db_session.create_session()
+    types = db_sess.query(Types).all()
+    for type in types:
+        for product in type.products:
+            for product_color in product.products:
+                if product_color.img:
+                    product_color.img = product_color.img.split(', ')
+    return redirect(f'/search?text={search}')
+@app.route("/search", methods=['POST', 'GET'])
+def search():
+    text = request.args.get("text", default="", type=str).split()
+    db_sess = db_session.create_session()
+    products_title = db_sess.query(ProductGroup).filter(ProductGroup.title.like(f'%{text}%')).all()
+    products_description = db_sess.query(ProductGroup).filter(ProductGroup.description.like(f'%{text}%')).all()
+    products_color = db_sess.query(Products).filter(Products.color.like(f'%{text}%')).all()
+    for i in text:
+        ...
+    to_show = sum([i.products for i in products_title], []) + sum([i.products for i in products_description], []) + products_color
+    return str(to_show)
 
 @app.route('/product/<int:product_group_id>/<int:product_id>', methods=['GET', 'POST'])
 def show_product(product_group_id, product_id):
-    return render_template('pages/show_product.html', title=propd)
+    return render_template('pages/show_product.html', title='product')
 
 
 @app.route('/admin/types', methods=['GET', 'POST'])
@@ -110,7 +136,7 @@ def admin_user():
 @app.route('/admin/orders', methods=['GET', 'POST'])
 @login_required
 def admin_orders():
-    if current_user.admin: 
+    if current_user.admin:
         db_sess = db_session.create_session()
         orders = db_sess.query(Order).all()
         return render_template('pages/admin_orders.html', title='Админ панель',
