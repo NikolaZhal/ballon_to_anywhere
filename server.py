@@ -64,6 +64,7 @@ def index_get():
                     product_color.img = product_color.img.split(', ')
     return render_template('pages/index.html', types=types, view='nocube')
 
+
 @app.route("/", methods=['POST'])
 @app.route("/index", methods=['POST'])
 def index_post():
@@ -76,17 +77,22 @@ def index_post():
                 if product_color.img:
                     product_color.img = product_color.img.split(', ')
     return redirect(f'/search?text={search}')
+
+
 @app.route("/search", methods=['POST', 'GET'])
 def search():
     text = request.args.get("text", default="", type=str).split()
     db_sess = db_session.create_session()
-    products_title = db_sess.query(ProductGroup).filter(ProductGroup.title.like(f'%{text}%')).all()
-    products_description = db_sess.query(ProductGroup).filter(ProductGroup.description.like(f'%{text}%')).all()
-    products_color = db_sess.query(Products).filter(Products.color.like(f'%{text}%')).all()
-    for i in text:
-        ...
-    to_show = sum([i.products for i in products_title], []) + sum([i.products for i in products_description], []) + products_color
-    return str(to_show)
+    products = []
+    products_color = []
+    for word in text:
+        products.extend(db_sess.query(ProductGroup).filter(
+            (ProductGroup.title.like(f'%{word}%')) | (ProductGroup.description.like(f'%{word}%'))).all())
+        products_color.extend(db_sess.query(Products).filter(Products.color.like(f'%{word}%')).all())
+    turn = sum([i.products for i in products], []) + products_color
+    to_show = sorted(set(turn), key=lambda z: turn.index(z))
+    return str(turn) + '\n' + str(to_show)
+
 
 @app.route('/product/<int:product_group_id>/<int:product_id>', methods=['GET', 'POST'])
 def show_product(product_group_id, product_id):
