@@ -83,7 +83,7 @@ def index_post():
 def search_get():
     text = request.args.get("text", default="", type=str).split()
     min_cost = request.args.get("min_cost", default=0, type=int)
-    max_cost = request.args.get("max_cost", default=10**10, type=int)
+    max_cost = request.args.get("max_cost", default=10 ** 10, type=int)
     db_sess = db_session.create_session()
     products = []
     products_color = []
@@ -96,12 +96,14 @@ def search_get():
     to_show = sorted(filter(lambda x: min_cost <= x.cost <= max_cost, set(turn)), key=lambda z: turn.index(z))
     return render_template('pages/search.html', title='product', products=to_show)
 
+
 @app.route("/search", methods=['POST'])
 def search_post():
     text = request.form.get("text", default="", type=str) or request.args.get("text", default="", type=str)
     min_cost = request.form.get('min_cost')
     max_cost = request.form.get('max_cost')
     return redirect(f'/search?text={text}&min_cost={min_cost}&max_cost={max_cost}')
+
 
 @app.route('/product/<int:product_group_id>/<int:product_id>', methods=['GET', 'POST'])
 def show_product(product_group_id, product_id):
@@ -406,7 +408,10 @@ def user_make_order():
     for i in to_order:
         content[i] = first_content[i]
     form = MakeOrder()
-
+    db_sess = db_session.create_session()
+    products = db_sess.query(Products).filter(Products.id.in_([int(i) for i in content])).all()
+    cost = sum([(i.cost - i.sale) * content[str(i.id)] for i in products])
+    content = {int(i): content[i] for i in content}
     if form.validate_on_submit():
         date = datetime.fromisoformat(str(form.date.data) + 'T' + str(form.time.data))
         # time = datetime.strptime(str(form.time.data))
@@ -421,16 +426,25 @@ def user_make_order():
         )
         db_sess.add(order)
         db_sess.commit()
-        order.content = ast.literal_eval(order.content)
         message = make_order_text(order)
+
+        user = db_sess.query(User).filter(User.id == current_user.id).first()
+        user.basket = ast.literal_eval(user.basket)
+        for product_id in content:
+            if product_id in user.basket:
+                del user.basket[product_id]
+        user.basket = str(user.basket)
+        db_sess.commit()
+
         db_sess = db_session.create_session()
         admins = db_sess.query(User).filter(User.admin == True).all()
-        # for admin in admins:
-        #     send_email(admin.email, f'Заказ {order.id}', f'{order.content}, {form.content.data}')
+        for admin in admins:
+            send_email(admin.email, f'Заказ {order.id}', f'{message}')
         send_info(
             f'{message}')
         return redirect('/')
-    return render_template('pages/make_order.html', title='Заказ', form=form)
+    return render_template('pages/make_order.html', title='Заказ', form=form, products=products, cost=cost,
+                           content=content)
 
 
 def make_order_text(order):
@@ -439,9 +453,9 @@ def make_order_text(order):
     user = db_sess.query(User).filter(User.id == int(order.user_id)).first()
     answer += f'данные о пользователе:\n{user.tel}\n{user.email}\n{user.name}\n\n'
     answer += f'данные о заказе:\nАдрес:{order.address}\nВремя к которому доставить:{order.to_date}\nКомментарий:{order.data}\n\nТовары:\n'
-    for item in order.content:
+    for item in ast.literal_eval(order.content):
         product = db_sess.query(Products).filter(Products.id == int(item)).first()
-        answer += f'\nТовар:{product.product_group.title} {product.color}\nКоличество:{order.content[item]}\n'
+        answer += f'\nТовар: {product.product_group.title} {product.color}\nКоличество: {ast.literal_eval(order.content)[item]}\n'
     return answer
 
 

@@ -1,9 +1,7 @@
-import asyncio
 import json
-import os
+
+import telebot
 from aiogram import Bot, Dispatcher
-from aiogram.filters import CommandStart
-from aiogram.types import Message
 
 with open('config.json') as file:
     data = json.load(file)
@@ -15,28 +13,38 @@ dp = Dispatcher()
 papa_chat = 2109964431
 
 
-async def send_info_tg(message):
-    await bot.send_message(papa_chat, str(message))
+class TelegramPost:
+    TOKEN = TOCKEN
+    GROUP_ID = papa_chat
+    bot = telebot.TeleBot(TOKEN, parse_mode='HTML')
+
+    def send_text(self, text):
+        self.bot.send_message(self.GROUP_ID, text=text)
 
 
-def send_info(message):
-    if os.name == 'nt':
-        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-    asyncio.run(send_info_tg(message))
+def send_info(text):
+    bot = TelegramPost()
+    bot.send_text(text=text)
 
 
+if __name__ == '__main__':
+    send_info('''данные о пользователе:
++7 (953) 746 7510
+ryazan62nik@yandex.ru
+Kola_Zhal
 
-@dp.message()
-async def other(message: Message):
-    if papa_chat != message.chat.id:
-        await bot.send_message(papa_chat, f"{message} \n@{message.from_user.username}")
-    pass
+данные о заказе:
+Адрес:Novosyolov d50 k2
+Время к которому доставить:2024-05-24 11:20:00
+Комментарий:await session.close()await session.close()await session.close()
 
+Товары:
 
-async def main():
-    await bot.delete_webhook(drop_pending_updates=True)
-    await dp.start_polling(bot)
+Товар:big balloon green
+Количество:3
 
+Товар:<little flower red
+Количество:2
 
-if __name__ == "__main__":
-    send_info('datadatadata')
+Товар:hello red
+Количество:3''')
