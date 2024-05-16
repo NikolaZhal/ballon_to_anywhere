@@ -18,9 +18,16 @@ text-decoration:none;
   color: #d9480f;
 }
 
-.product-img {
+.product-img-place {
   grid-column: 1 / 4;
   grid-row: 1 / 4;
+  width: 30vh;
+  height: 30vh;
+ }
+.product-img {
+  height: 25vh;
+  border-radius: 20px;
+  object-fit: cover;
 }
 .product-description {
   grid-column: 4 / 11;

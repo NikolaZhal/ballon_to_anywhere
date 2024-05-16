@@ -102,7 +102,7 @@ th {
 .menu-item {
     width: 30vh;
     height: 30vh;
-    margin: 20px 5px;
+    margin: 10px 5px;
     text-align: center;
     background-color: var(--thirdly-color);
     position: relative;
@@ -115,12 +115,8 @@ th {
     transform: scale(1.25);
     transition: 0.75s;
 }
-*/
-.menu-item-image {
-    width: 30vh;
-    height: 30vh;
-    border-radius: 20px;
-    object-fit: cover;
+
+
 
 }
 
@@ -141,7 +137,13 @@ th {
     color: white;
     margin: 10px 0;
 }
-
+*/
+.menu-item-image {
+    width: 30vh;
+    height: 30vh;
+    border-radius: 20px;
+    object-fit: contain;
+   }
 .text-shadow {
     background-color: rgba(0, 0, 0, 0.70);
     position: absolute;
@@ -301,7 +303,18 @@ justify-content: center;
      margin: 0 auto;
      text-align: left;
 }
+.main-sidebar{
+    width: 100vw;
+    height: 100vh;
+    margin: auto;
+    display:grid;
+    grid-template-columns: 100px 1fr;
+    gap:10;
+    grid-auto-flow: column;
+}
+.sidebar{
 
+}
 
 body {
      margin: 0;

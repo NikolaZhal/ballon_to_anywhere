@@ -105,7 +105,7 @@ def search_post():
     return redirect(f'/search?text={text}&min_cost={min_cost}&max_cost={max_cost}')
 
 
-@app.route('/product/<int:product_group_id>/<int:product_id>', methods=['GET', 'POST'])
+@app.route('/show_product/<int:product_group_id>/<int:product_id>', methods=['GET', 'POST'])
 def show_product(product_group_id, product_id):
     return render_template('pages/show_product.html', title='product')
 
