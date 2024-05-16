@@ -68,7 +68,7 @@ def index_get():
 @app.route("/", methods=['POST'])
 @app.route("/index", methods=['POST'])
 def index_post():
-    search = request.form.get("search")
+    text = request.form.get("text")
     db_sess = db_session.create_session()
     types = db_sess.query(Types).all()
     for type in types:
@@ -76,23 +76,24 @@ def index_post():
             for product_color in product.products:
                 if product_color.img:
                     product_color.img = product_color.img.split(', ')
-    return redirect(f'/search?text={search}')
+    return redirect(f'/search?text={text}')
 
 
 @app.route("/search")
 def search_get():
     text = request.args.get("text", default="", type=str).split()
     min_cost = request.args.get("min_cost", default=0, type=int)
-    max_cost = request.args.get("max_cost", default=-1, type=int)
+    max_cost = request.args.get("max_cost", default=10**10, type=int)
     db_sess = db_session.create_session()
     products = []
     products_color = []
+    # if min_cost == 0 and max_cost == -1
     for word in text:
         products.extend(db_sess.query(ProductGroup).filter(
             (ProductGroup.title.like(f'%{word}%')) | (ProductGroup.description.like(f'%{word}%'))).all())
         products_color.extend(db_sess.query(Products).filter(Products.color.like(f'%{word}%')).all())
     turn = sum([i.products for i in products], []) + products_color
-    to_show = sorted(set(turn), key=lambda z: turn.index(z))
+    to_show = sorted(filter(lambda x: min_cost <= x.cost <= max_cost, set(turn)), key=lambda z: turn.index(z))
     return render_template('pages/search.html', title='product', products=to_show)
 
 @app.route("/search", methods=['POST'])
@@ -440,7 +441,7 @@ def make_order_text(order):
     answer += f'данные о заказе:\nАдрес:{order.address}\nВремя к которому доставить:{order.to_date}\nКомментарий:{order.data}\n\nТовары:\n'
     for item in order.content:
         product = db_sess.query(Products).filter(Products.id == int(item)).first()
-        answer += f'\nТовар:{product.title}\nКоличество:{order.content[item]}\n'
+        answer += f'\nТовар:{product.product_group.title} {product.color}\nКоличество:{order.content[item]}\n'
     return answer
 
 

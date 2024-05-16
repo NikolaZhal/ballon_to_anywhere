@@ -1,6 +1,6 @@
 import asyncio
 import json
-
+import os
 from aiogram import Bot, Dispatcher
 from aiogram.filters import CommandStart
 from aiogram.types import Message
@@ -20,13 +20,10 @@ async def send_info_tg(message):
 
 
 def send_info(message):
+    if os.name == 'nt':
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     asyncio.run(send_info_tg(message))
 
-
-@dp.message(CommandStart())
-async def start(message: Message):
-    await message.answer(f"Hello, {message.from_user.first_name}", reply_markup=main_kb)
-    await bot.send_message(papa_chat, str(message.text))
 
 
 @dp.message()
