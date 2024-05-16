@@ -21,5 +21,7 @@ class Products(SqlAlchemyBase, SerializerMixin):
     product_group_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("product_group.id"))
     product_group = orm.relationship('ProductGroup')
 
+    def get_img(self):
+        return self.img.split(', ')
     def __repr__(self):
         return f'<products> {self.id} {self.color}'

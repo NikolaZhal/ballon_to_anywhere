@@ -57,11 +57,11 @@ def index_get():
     search = request.args.get("search", default="sample", type=str)
     db_sess = db_session.create_session()
     types = db_sess.query(Types).all()
-    for type in types:
-        for product in type.products:
-            for product_color in product.products:
-                if product_color.img:
-                    product_color.img = product_color.img.split(', ')
+    # for type in types:
+    #     for product in type.products:
+    #         for product_color in product.products:
+    #             if product_color.img:
+    #                 product_color.img = product_color.img.split(', ')
     return render_template('pages/index.html', types=types, view='nocube')
 
 
@@ -79,9 +79,11 @@ def index_post():
     return redirect(f'/search?text={search}')
 
 
-@app.route("/search", methods=['POST', 'GET'])
-def search():
+@app.route("/search")
+def search_get():
     text = request.args.get("text", default="", type=str).split()
+    min_cost = request.args.get("min_cost", default=0, type=int)
+    max_cost = request.args.get("max_cost", default=-1, type=int)
     db_sess = db_session.create_session()
     products = []
     products_color = []
@@ -91,8 +93,14 @@ def search():
         products_color.extend(db_sess.query(Products).filter(Products.color.like(f'%{word}%')).all())
     turn = sum([i.products for i in products], []) + products_color
     to_show = sorted(set(turn), key=lambda z: turn.index(z))
-    return str(turn) + '\n' + str(to_show)
+    return render_template('pages/search.html', title='product', products=to_show)
 
+@app.route("/search", methods=['POST'])
+def search_post():
+    text = request.form.get("text", default="", type=str) or request.args.get("text", default="", type=str)
+    min_cost = request.form.get('min_cost')
+    max_cost = request.form.get('max_cost')
+    return redirect(f'/search?text={text}&min_cost={min_cost}&max_cost={max_cost}')
 
 @app.route('/product/<int:product_group_id>/<int:product_id>', methods=['GET', 'POST'])
 def show_product(product_group_id, product_id):

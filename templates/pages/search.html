@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<nav class="navbar navbar-light bg-light title-width">
+    <div align="left">
+        <h1>Товарчики</h1>
+    </div>
+    <div align="right">
+        <form method="POST">
+            <input type="text" id="search" name="search"/>
+            <input type="submit" value="Поиск" />
+        </form>
+
+    </div>
+    <div align="right">
+        <a href="/basket">
+            <div class="basket-button"></div>
+        </a>
+    </div>
+</nav>
+<nav class="navbar navbar-light bg-light title-width">
+    <div align="right">
+        {% for type in types %}
+        <a href="#{{type.title}}" class="btn btn-success">{{type.title}}</a>
+        {% endfor %}
+    </div>
+</nav>
+<div>
+    <form method="POST">
+        <input type="text" id="min_cost" name="min_cost"/>
+        <input type="text" id="max_cost" name="max_cost"/>
+        <input type="submit" value="Поиск"/>
+    </form>
+</div>
+<div class="menu">
+    {% for product in products %}
+    {% include 'includes/product.html' %}
+    {% endfor %}
+
+</div>
+
+{% endblock %}
