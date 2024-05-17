@@ -24,7 +24,7 @@ class ProductForm(FlaskForm):
     product_group = SelectField('Наименование группы товара',coerce=int , choices=[(-1, 'Если необходимо создайте новую группу')]
                                 )
     cost = StringField("Стоимость в рублях", validators=[DataRequired()])
-    sale = StringField('Скидка (временная стоимость в Р)', validators=[DataRequired()], default='0')
+    sale = StringField('Скидка (- n Р)', validators=[DataRequired()], default='0')
     remains = StringField('Остаток продукта', validators=[DataRequired()])
     imgs = MultiCheckboxField('Изображение', choices=[(-1, 'Нет изображений')])
     img = MultipleFileField(validators=[])

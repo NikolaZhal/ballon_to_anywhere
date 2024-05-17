@@ -81,20 +81,20 @@ def index_post():
 
 @app.route("/search")
 def search_get():
-    text = request.args.get("text", default="", type=str).split()
+    text = request.args.get("text", default="", type=str)
     min_cost = request.args.get("min_cost", default=0, type=int)
     max_cost = request.args.get("max_cost", default=10 ** 10, type=int)
     db_sess = db_session.create_session()
     products = []
     products_color = []
     # if min_cost == 0 and max_cost == -1
-    for word in text:
+    for word in text.split():
         products.extend(db_sess.query(ProductGroup).filter(
             (ProductGroup.title.like(f'%{word}%')) | (ProductGroup.description.like(f'%{word}%'))).all())
         products_color.extend(db_sess.query(Products).filter(Products.color.like(f'%{word}%')).all())
     turn = sum([i.products for i in products], []) + products_color
     to_show = sorted(filter(lambda x: min_cost <= x.cost <= max_cost, set(turn)), key=lambda z: turn.index(z))
-    return render_template('pages/search.html', title='product', products=to_show)
+    return render_template('pages/search.html', title='product', products=to_show, text=text, min_cost=min_cost, max_cost=max_cost)
 
 
 @app.route("/search", methods=['POST'])
@@ -107,7 +107,10 @@ def search_post():
 
 @app.route('/show_product/<int:product_group_id>/<int:product_id>', methods=['GET', 'POST'])
 def show_product(product_group_id, product_id):
-    return render_template('pages/show_product.html', title='product')
+    db_sess = db_session.create_session()
+    product_group = db_sess.query(ProductGroup).filter(ProductGroup.id == product_group_id).first()
+    product = db_sess.query(Products).filter(Products.id == product_id).first()
+    return render_template('pages/show_product.html', title='product', product=product, product_group=product_group)
 
 
 @app.route('/admin/types', methods=['GET', 'POST'])
@@ -439,9 +442,9 @@ def user_make_order():
         db_sess = db_session.create_session()
         admins = db_sess.query(User).filter(User.admin == True).all()
         for admin in admins:
-            send_email(admin.email, f'Заказ {order.id}', f'{message}')
+            send_email(admin.email, f'Заказ {message[0]}', f'{message[1]}')
         send_info(
-            f'{message}')
+            f'{message[1]}')
         return redirect('/')
     return render_template('pages/make_order.html', title='Заказ', form=form, products=products, cost=cost,
                            content=content)
@@ -456,7 +459,7 @@ def make_order_text(order):
     for item in ast.literal_eval(order.content):
         product = db_sess.query(Products).filter(Products.id == int(item)).first()
         answer += f'\nТовар: {product.product_group.title} {product.color}\nКоличество: {ast.literal_eval(order.content)[item]}\n'
-    return answer
+    return order.id, answer
 
 
 @app.route('/basket', methods=['GET', 'POST'])
