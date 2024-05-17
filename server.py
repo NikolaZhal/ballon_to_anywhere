@@ -397,7 +397,12 @@ def remove_item(type, id):
             db_sess = db_session.create_session()
             db_sess.query(Products).filter(Products.id == id).delete()
             db_sess.commit()
-        return redirect('/admin/products')
+            return redirect('/admin/products')
+        if type == 'productgroup':
+            db_sess = db_session.create_session()
+            db_sess.query(ProductGroup).filter(ProductGroup.id == id).delete()
+            db_sess.commit()
+        return redirect('/admin/productsgroups')
     else:
         return render_template('pages/no_rights.html')
 

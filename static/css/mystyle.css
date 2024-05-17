@@ -363,7 +363,7 @@ body {
 }
 .show-product-sub{
     display: grid;
-    grid-template-columns: 5vw 5vw;
+    grid-template-columns: 10vw 5vw;
     gap:10;
     grid-auto-flow: column;
 }

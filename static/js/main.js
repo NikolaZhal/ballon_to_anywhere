@@ -4,7 +4,7 @@ function show_me(id, type )
   var type = type;
   var data = confirm("Вы хотите удалить это?");
   if (data){
-    window.location.href = "../../remove_item/" + type + "/"+ id;}
+    window.location.href = "/remove_item/" + type + "/"+ id;}
 
 };
 async function addToBasket(product_id, user_id = 0) {
