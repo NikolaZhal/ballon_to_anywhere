@@ -1,15 +1,12 @@
 import json
 
 import telebot
-from aiogram import Bot, Dispatcher
 
 with open('config.json') as file:
     data = json.load(file)
 TOCKEN = data['TOCKEN']
 
 # session = AiohttpSession(proxy='http://proxy.server:3128')
-bot = Bot(TOCKEN)
-dp = Dispatcher()
 papa_chat = 2109964431
 
 
