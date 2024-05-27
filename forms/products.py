@@ -9,19 +9,32 @@ class MultiCheckboxField(SelectMultipleField):
     option_widget = widgets.CheckboxInput()
 
 
+class SearchForm(FlaskForm):
+    min_cost = StringField('Цена От', validators=[], default='0')
+    max_cost = StringField('Цена До', validators=[])
+    types = MultiCheckboxField('Типы товаров', coerce=int,  choices=[(-1, 'Все')])
+    submit = SubmitField('Показать')
+
+    def __init__(self, *args, types_data=[], **kwargs):
+        super().__init__(*args, **kwargs)
+        self.types.choices.extend(types_data)
+
+
 class ProductGroupForm(FlaskForm):
     title = StringField('Название продукта (цветовой группы)', validators=[DataRequired()])
     description = TextAreaField('Описание продукта (цветовой группы)', validators=[DataRequired()])
     type = SelectField('Тип продукта (цветовой группы)', coerce=int, choices=[(-1, 'Если необходимо создайте тип')])
-    submit = SubmitField('Создать продукта')
+    submit = SubmitField('Создать продукт')
 
     def __init__(self, *args, types=[], **kwargs):
         super().__init__(*args, **kwargs)
         self.type.choices = types
 
+
 class ProductForm(FlaskForm):
     color = StringField('Цвет продукта (единицы цветовой группы)', validators=[DataRequired()])
-    product_group = SelectField('Наименование группы товара',coerce=int , choices=[(-1, 'Если необходимо создайте новую группу')]
+    product_group = SelectField('Наименование группы товара', coerce=int,
+                                choices=[(-1, 'Если необходимо создайте новую группу')]
                                 )
     cost = StringField("Стоимость в рублях", validators=[DataRequired()])
     sale = StringField('Скидка (- n Р)', validators=[DataRequired()], default='0')

@@ -9,7 +9,7 @@ from flask import Flask
 from flask import render_template, redirect, request, abort
 from flask import session
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-from waitress import serve
+# from waitress import serve
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 
@@ -23,7 +23,7 @@ from data.types import Types
 from data.users import User
 from email_sender import send_email
 from forms.orders import BasketForm, MakeOrder
-from forms.products import ProductForm, ProductGroupForm
+from forms.products import ProductForm, ProductGroupForm, SearchForm
 from forms.types import TypeForm
 from forms.user import RegisterForm, LoginForm, ConfirmationForm
 
@@ -79,31 +79,52 @@ def index_post():
     return redirect(f'/search?text={text}')
 
 
-@app.route("/search")
+@app.route("/search", methods=['GET', 'POST'])
 def search_get():
-    text = request.args.get("text", default="", type=str)
-    min_cost = request.args.get("min_cost", default=0, type=int)
-    max_cost = request.args.get("max_cost", default=10 ** 10, type=int)
     db_sess = db_session.create_session()
-    products = []
-    products_color = []
-    # if min_cost == 0 and max_cost == -1
-    for word in text.split():
-        products.extend(db_sess.query(ProductGroup).filter(
-            (ProductGroup.title.like(f'%{word}%')) | (ProductGroup.description.like(f'%{word}%'))).all())
-        products_color.extend(db_sess.query(Products).filter(Products.color.like(f'%{word}%')).all())
-    turn = sum([i.products for i in products], []) + products_color
-    to_show = sorted(filter(lambda x: min_cost <= x.cost <= max_cost, set(turn)), key=lambda z: turn.index(z))
-    return render_template('pages/search.html', title='product', products=to_show, text=text, min_cost=min_cost, max_cost=max_cost)
+    types = db_sess.query(Types).all()
+    types_data = [(i.id, i.title) for i in types]
+    form = SearchForm(types_data=types_data)
+    if request.method == 'GET':
+        text = request.args.get("text", default="", type=str)
+        min_cost = request.args.get("min_cost", default=0, type=int)
+        max_cost = request.args.get("max_cost", type=int)
+        types_post = [int(i) for i in request.args.get("types", default='-1',  type=str).split(', ')]
+        print(types_post)
+        # настройка формы
+        if -1 in types_post:
+            types_post = [i[0]for i in form.types.choices]
+            print(types)
+        form.types.data = types_post
+        form.min_cost.data = min_cost
+        form.max_cost.data = max_cost
 
-
-@app.route("/search", methods=['POST'])
-def search_post():
-    text = request.form.get("text", default="", type=str) or request.args.get("text", default="", type=str)
-    min_cost = request.form.get('min_cost')
-    max_cost = request.form.get('max_cost')
-    return redirect(f'/search?text={text}&min_cost={min_cost}&max_cost={max_cost}')
-
+        products = []
+        products_color = []
+        # if min_cost == 0 and max_cost == -1
+        if text:
+            for word in text.split():
+                products.extend(db_sess.query(ProductGroup).filter(
+                    (ProductGroup.title.like(f'%{word}%')) | (ProductGroup.description.like(f'%{word}%'))).all())
+                products_color.extend(db_sess.query(Products).filter(Products.color.like(f'%{word}%')).all())
+            turn = sum([i.products for i in products], []) + products_color
+        else:
+            turn = db_sess.query(Products).all()
+        if max_cost:
+            to_show = sorted(filter(lambda x: min_cost <= x.cost <= max_cost, set(turn)), key=lambda z: turn.index(z))
+        else:
+            to_show = sorted(filter(lambda x: min_cost <= x.cost, set(turn)), key=lambda z: turn.index(z))
+            max_cost = ''
+        types = db_sess.query(Types).all()
+        return render_template('pages/search.html', title='product', products=to_show, text=text, min_cost=min_cost,
+                               max_cost=max_cost, types=types, form=form)
+    if form.validate_on_submit():
+        text = request.form.get("text", default="", type=str) or request.args.get("text", default="", type=str)
+        min_cost = form.min_cost.data
+        max_cost = form.max_cost.data
+        types = ', '.join([str(i) for i in form.types.data]) or -1
+        return redirect(f'/search?text={text}&min_cost={min_cost}&max_cost={max_cost}&types={types}')
+    abort(404)
 
 @app.route('/show_product/<int:product_group_id>/<int:product_id>', methods=['GET', 'POST'])
 def show_product(product_group_id, product_id):
@@ -438,9 +459,10 @@ def user_make_order():
 
         user = db_sess.query(User).filter(User.id == current_user.id).first()
         user.basket = ast.literal_eval(user.basket)
+        print(user.basket, content, sep='\n')
         for product_id in content:
-            if product_id in user.basket:
-                del user.basket[product_id]
+            if str(product_id) in user.basket:
+                del user.basket[str(product_id)]
         user.basket = str(user.basket)
         db_sess.commit()
 
@@ -449,7 +471,7 @@ def user_make_order():
         for admin in admins:
             send_email(admin.email, f'Заказ {message[0]}', f'{message[1]}')
         send_info(
-            f'{message[1]}')
+            f'{message[2]}')
         return redirect('/')
     return render_template('pages/make_order.html', title='Заказ', form=form, products=products, cost=cost,
                            content=content)
@@ -459,12 +481,12 @@ def make_order_text(order):
     answer = ''
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.id == int(order.user_id)).first()
-    answer += f'данные о пользователе:\n{user.tel}\n{user.email}\n{user.name}\n\n'
-    answer += f'данные о заказе:\nАдрес:{order.address}\nВремя к которому доставить:{order.to_date}\nКомментарий:{order.data}\n\nТовары:\n'
+    answer += f'данные о пользователе:<br>{user.tel}<br>{user.email}<br>{user.name}<br><br>'
+    answer += f'данные о заказе:<br>Адрес:{order.address}<br>Время к которому доставить:{order.to_date}<br>Комментарий:<br><code>{order.data}</code><br><br>Товары:<br>'
     for item in ast.literal_eval(order.content):
         product = db_sess.query(Products).filter(Products.id == int(item)).first()
         answer += f'\nТовар: {product.product_group.title} {product.color}\nКоличество: {ast.literal_eval(order.content)[item]}\n'
-    return order.id, answer
+    return order.id, answer, answer.replace('<br>', '\n')
 
 
 @app.route('/basket', methods=['GET', 'POST'])
@@ -579,8 +601,8 @@ def main():
     # port = int(os.environ.get("PORT", 5000))
     port = 5000
     app.register_blueprint(products_api.blueprint)
-    # app.run(host='0.0.0.0', port=port, debug=True)
-    serve(app, host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=port, debug=True)
+    # serve(app, host='0.0.0.0', port=port)
 
 
 if __name__ == '__main__':

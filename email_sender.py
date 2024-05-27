@@ -17,7 +17,7 @@ def send_email(email, subject, text):
     msg['Subject'] = subject
 
     body = text
-    msg.attach(MIMEText(body, 'plain'))
+    msg.attach(MIMEText(body, 'html'))
     try:
         server = smtplib.SMTP_SSL(data['E_HOST'], data['E_PORT'])
         server.login(addr_from, password)

@@ -30,12 +30,29 @@
 <div class="main-sidebar">
     <div class="sidebar">
         <label class="form-label">Цена</label>
-        <form method="POST">
-            <label class="form-label">От</label>
-            <input type="text" id="min_cost" name="min_cost" class="form-control"/>
-            <label class="form-label">До</label>
-            <input type="text" id="max_cost" name="max_cost" class="form-control"/>
-            <input type="submit" value="Показать" class="btn btn-primary"/>
+        <form action="" method="post">
+            {{ form.hidden_tag() }}
+            <div>
+                {{ form.csrf_token }}
+            </div>
+            {% for field in form if field.name not in ['csrf_token', 'submit', 'types', 'all_types'] %}
+            <div>
+                {{ field.label() }}
+                {{ field(class="form-control")}}
+                {% for error in field.errors %}
+                <div class="error">{{ error }}</div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+            <br>
+            <p>{{form.types.label}}</p>
+            <div>
+                {% for subfield in form.types %}
+                <div style="margin: 0 1vh 1vh 1vh;">{{ subfield() }}{{ subfield.label.text }}
+                </div>
+                {% endfor %}
+            </div>
+            <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
         </form>
     </div>
     <div class="menu">

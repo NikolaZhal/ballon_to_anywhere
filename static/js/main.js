@@ -9,7 +9,7 @@ function show_me(id, type )
 };
 async function addToBasket(product_id, user_id = 0) {
 //       var data = confirm("Вы хотите удалить это?");
-  const response = await fetch('./api/add_product', {
+  const response = await fetch('/api/add_product', {
     method: 'POST',
     body: JSON.stringify({'product_id': product_id, 'user_id': user_id}),
     headers: {
@@ -21,7 +21,7 @@ async function addToBasket(product_id, user_id = 0) {
 };
 
 async function removeFromBasket(product_id, user_id = 0) {
-  const response = await fetch('../api/remove_product', {
+  const response = await fetch('/api/remove_product', {
     method: 'POST',
     body: JSON.stringify({'product_id': product_id, 'user_id': user_id}),
     headers: {
@@ -32,7 +32,7 @@ async function removeFromBasket(product_id, user_id = 0) {
   const myJson = await response.json();
 };
 async function minusFromBasket(product_id, user_id = 0) {
-  const response = await fetch('../api/minus_product', {
+  const response = await fetch('/api/minus_product', {
     method: 'POST',
     body: JSON.stringify({'product_id': product_id, 'user_id': user_id}),
     headers: {
