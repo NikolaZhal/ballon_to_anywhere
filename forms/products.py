@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import SelectField, StringField, SubmitField, MultipleFileField, widgets, SelectMultipleField, \
-    TextAreaField
+    TextAreaField, IntegerField
 from wtforms.validators import DataRequired
 
 
@@ -10,7 +10,7 @@ class MultiCheckboxField(SelectMultipleField):
 
 
 class SearchForm(FlaskForm):
-    min_cost = StringField('Цена От', validators=[], default='0')
+    min_cost = StringField('Цена От', validators=[], default=0)
     max_cost = StringField('Цена До', validators=[])
     types = MultiCheckboxField('Типы товаров', coerce=int,  choices=[(-1, 'Все')])
     submit = SubmitField('Показать')
@@ -36,9 +36,9 @@ class ProductForm(FlaskForm):
     product_group = SelectField('Наименование группы товара', coerce=int,
                                 choices=[(-1, 'Если необходимо создайте новую группу')]
                                 )
-    cost = StringField("Стоимость в рублях", validators=[DataRequired()])
-    sale = StringField('Скидка (- n Р)', validators=[DataRequired()], default='0')
-    remains = StringField('Остаток продукта', validators=[DataRequired()])
+    cost = IntegerField("Стоимость в рублях", validators=[DataRequired()])
+    sale = IntegerField('Скидка (- n Р)', validators=[DataRequired()], default=0)
+    remains = IntegerField('Остаток продукта', validators=[DataRequired()])
     imgs = MultiCheckboxField('Изображение', choices=[(-1, 'Нет изображений')])
     img = MultipleFileField(validators=[])
 

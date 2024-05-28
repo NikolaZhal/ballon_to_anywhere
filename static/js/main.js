@@ -1,10 +1,10 @@
-function show_me(id, type )
+function show_me(id, type , sender = -1)
 {
   var id = id;
   var type = type;
   var data = confirm("Вы хотите удалить это?");
   if (data){
-    window.location.href = "/remove_item/" + type + "/"+ id;}
+    window.location.href = "/remove_item/" + type + "/"+ id + "/"+ sender;}
 
 };
 async function addToBasket(product_id, user_id = 0) {

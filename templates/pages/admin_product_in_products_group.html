@@ -40,7 +40,7 @@
             <td>{{ product.cost }}₽</td>
             <td>{{ product.sale }}₽</td>
             <td>
-                <button type="submit" onclick="show_me({{product.id}}, 'products');" class="delete-button">
+                <button type="submit" onclick="show_me({{product.id}}, 'products', {{productgroup.id}});" class="delete-button">
                     <!--                        <img-->
                     <!--                            src="{{ url_for('static', filename='../static/img/system/admin_del_item.png') }}"-->
                     <!--                            style="width: 5vh; height: 5vh; border-radius: 20px;"></button>-->

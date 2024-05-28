@@ -410,20 +410,25 @@ def edit_product(product_id, sender):
                            form=form, data=data
                            )
 
-
-@app.route('/remove_item/<string:type>/<int:id>', methods=['GET', 'POST'])
-def remove_item(type, id):
+@app.route('/remove_item/<string:type>/<int:id>/<string:sender>', methods=['GET', 'POST'])
+def remove_item(type, id, sender):
     if current_user.admin:
         if type == 'products':
             db_sess = db_session.create_session()
             db_sess.query(Products).filter(Products.id == id).delete()
             db_sess.commit()
-            return redirect('/admin/products')
-        if type == 'productgroup':
+            redirect_address = '/admin/products'
+            if sender != '-1':
+                redirect_address = f'/admin/products-productgroup/{sender}'
+            return redirect(redirect_address)
+        elif type == 'productgroup':
             db_sess = db_session.create_session()
+            product_group = db_sess.query(ProductGroup).filter(ProductGroup.id == id).first()
+            for color in product_group.products:
+                db_sess.query(Products).filter(Products.id == color.id).delete()
             db_sess.query(ProductGroup).filter(ProductGroup.id == id).delete()
             db_sess.commit()
-        return redirect('/admin/productsgroups')
+            return redirect('/admin/productsgroups')
     else:
         return render_template('pages/no_rights.html')
 

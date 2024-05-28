@@ -14,18 +14,6 @@ blueprint = flask.Blueprint(
     __name__,
     template_folder='templates'
 )
-@blueprint.route('/api/products')
-def get_news():
-    db_sess = db_session.create_session()
-    news = db_sess.query(Products).all()
-    return jsonify(
-        {
-            'news':
-                [item.to_dict(only=('title', 'content', 'user.name'))
-                 for item in news]
-        }
-    )
-
 @blueprint.route('/api/add_product', methods=['POST'])
 def add_product():
     data = request.json
