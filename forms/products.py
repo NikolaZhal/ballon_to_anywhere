@@ -10,7 +10,7 @@ class MultiCheckboxField(SelectMultipleField):
 
 
 class SearchForm(FlaskForm):
-    min_cost = StringField('Цена От', validators=[], default=0)
+    min_cost = StringField('Цена От', validators=[], default='0')
     max_cost = StringField('Цена До', validators=[])
     types = MultiCheckboxField('Типы товаров', coerce=int,  choices=[(-1, 'Все')])
     submit = SubmitField('Показать')

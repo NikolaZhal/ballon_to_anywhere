@@ -54,7 +54,6 @@ def load_user(user_id):
 @app.route("/", methods=['GET'])
 @app.route("/index", methods=['GET'])
 def index_get():
-    search = request.args.get("search", default="sample", type=str)
     db_sess = db_session.create_session()
     types = db_sess.query(Types).all()
     # for type in types:
@@ -82,19 +81,23 @@ def index_post():
 @app.route("/search", methods=['GET', 'POST'])
 def search_get():
     db_sess = db_session.create_session()
-    types = db_sess.query(Types).all()
-    types_data = [(i.id, i.title) for i in types]
+    types_db = db_sess.query(Types).all()
+    types_data = [(i.id, i.title) for i in types_db]
     form = SearchForm(types_data=types_data)
-    if request.method == 'GET':
+    if form.validate_on_submit():
+        text = request.form.get("text", default="", type=str)
+        min_cost = form.min_cost.data
+        max_cost = form.max_cost.data
+        types = ', '.join([str(i) for i in form.types.data]) or -1
+        return redirect(f'/search?text={text}&min_cost={min_cost}&max_cost={max_cost}&types={types}')
+    elif request.method == 'GET':
         text = request.args.get("text", default="", type=str)
         min_cost = request.args.get("min_cost", default=0, type=int)
         max_cost = request.args.get("max_cost", type=int)
-        types_post = [int(i) for i in request.args.get("types", default='-1',  type=str).split(', ')]
-        print(types_post)
+        types_post = [int(i) for i in request.args.get("types", default='-1', type=str).split(', ')]
         # настройка формы
         if -1 in types_post:
-            types_post = [i[0]for i in form.types.choices]
-            print(types)
+            types_post = [i[0] for i in form.types.choices]
         form.types.data = types_post
         form.min_cost.data = min_cost
         form.max_cost.data = max_cost
@@ -103,28 +106,37 @@ def search_get():
         products_color = []
         # if min_cost == 0 and max_cost == -1
         if text:
+            print(text.split())
             for word in text.split():
-                products.extend(db_sess.query(ProductGroup).filter(
-                    (ProductGroup.title.like(f'%{word}%')) | (ProductGroup.description.like(f'%{word}%'))).all())
-                products_color.extend(db_sess.query(Products).filter(Products.color.like(f'%{word}%')).all())
-            turn = sum([i.products for i in products], []) + products_color
+                products.append(db_sess.query(Products).join(Products.product_group).filter(
+                    (Products.product_group.property.mapper.class_.title.like(f'%{word}%')) | (
+                        Products.product_group.property.mapper.class_.description.like(f'%{word}%'))).filter(
+                    Products.product_group.property.mapper.class_.type.in_(types_post)))
+                products_color.append(db_sess.query(Products).join(Products.product_group).filter(
+                    Products.product_group.property.mapper.class_.type.in_(types_post)).filter(
+                    Products.color.like(f'%{word}%')))
+            turn = products + products_color
         else:
-            turn = db_sess.query(Products).all()
+            turn = [db_sess.query(Products).join(Products.product_group).filter(
+                    Products.product_group.property.mapper.class_.type.in_(types_post))]
+        # return str(turn)
         if max_cost:
-            to_show = sorted(filter(lambda x: min_cost <= x.cost <= max_cost, set(turn)), key=lambda z: turn.index(z))
-        else:
-            to_show = sorted(filter(lambda x: min_cost <= x.cost, set(turn)), key=lambda z: turn.index(z))
-            max_cost = ''
-        types = db_sess.query(Types).all()
+            # to_show = sorted(filter(lambda x: min_cost <= x.cost <= max_cost, set(turn)), key=lambda z: turn.index(z))
+            for i, item in enumerate(turn):
+                turn[i] = item.filter(Products.cost <= max_cost)
+        to_show = []
+        for i, item in enumerate(turn):
+            to_show.extend(item.filter(Products.cost >= min_cost).all())
+        types_db = db_sess.query(Types).all()
         return render_template('pages/search.html', title='product', products=to_show, text=text, min_cost=min_cost,
-                               max_cost=max_cost, types=types, form=form)
-    if form.validate_on_submit():
-        text = request.form.get("text", default="", type=str) or request.args.get("text", default="", type=str)
-        min_cost = form.min_cost.data
-        max_cost = form.max_cost.data
-        types = ', '.join([str(i) for i in form.types.data]) or -1
-        return redirect(f'/search?text={text}&min_cost={min_cost}&max_cost={max_cost}&types={types}')
-    abort(404)
+                               max_cost=max_cost or '', types=types_db, form=form)
+    elif request.method == 'POST':
+        text = request.form.get("text", default="", type=str)
+        min_cost = request.args.get("min_cost", default=0, type=int)
+        max_cost = request.args.get("max_cost", type=int)
+        types_post = request.args.get("types", default='-1', type=str)
+        return redirect(f'/search?text={text}&min_cost={min_cost}&max_cost={max_cost}&types={types_post}')
+
 
 @app.route('/show_product/<int:product_group_id>/<int:product_id>', methods=['GET', 'POST'])
 def show_product(product_group_id, product_id):
@@ -409,6 +421,7 @@ def edit_product(product_id, sender):
                            title='Редактирование товара',
                            form=form, data=data
                            )
+
 
 @app.route('/remove_item/<string:type>/<int:id>/<string:sender>', methods=['GET', 'POST'])
 def remove_item(type, id, sender):
