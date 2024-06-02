@@ -44,6 +44,9 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+@app.errorhandler(401)
+def unauthorized(e):
+    return redirect('/login')
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -123,13 +126,19 @@ def search_get():
         if max_cost:
             # to_show = sorted(filter(lambda x: min_cost <= x.cost <= max_cost, set(turn)), key=lambda z: turn.index(z))
             for i, item in enumerate(turn):
-                turn[i] = item.filter(Products.cost <= max_cost)
+                turn[i] = item.filter(Products.cost - Products.sale <= max_cost)
         to_show = []
         for i, item in enumerate(turn):
             to_show.extend(item.filter(Products.cost >= min_cost).all())
+        show_parts = {}
+        for product in to_show:
+            type_title = product.product_group.type_relation.title
+            if type_title not in show_parts:
+                show_parts[type_title] = []
+            show_parts[type_title].append(product)
         types_db = db_sess.query(Types).all()
         return render_template('pages/search.html', title='product', products=to_show, text=text, min_cost=min_cost,
-                               max_cost=max_cost or '', types=types_db, form=form)
+                               max_cost=max_cost or '', types=types_db, form=form, show_parts=show_parts)
     elif request.method == 'POST':
         text = request.form.get("text", default="", type=str)
         min_cost = request.args.get("min_cost", default=0, type=int)

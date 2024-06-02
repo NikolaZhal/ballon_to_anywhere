@@ -23,9 +23,11 @@
         </div>
         {% endfor %}
         </p>
+        <p>нет аккаунта?<a href="/register">создать</a></p>
         <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
         <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
         <div>{{ message }}</div>
     </form>
+
 </div>
 {% endblock %}

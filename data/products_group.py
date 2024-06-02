@@ -17,6 +17,7 @@ class ProductGroup(SqlAlchemyBase, SerializerMixin):
     type = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("types.id"))
     type_relation = orm.relationship('Types')
     products = orm.relationship("Products", back_populates='product_group')
+    comments = orm.relationship("Comments", back_populates='product_group')
 
     def __repr__(self):
         return f'<products_group> {self.id} {self.title}'

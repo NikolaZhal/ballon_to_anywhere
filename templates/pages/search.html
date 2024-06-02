@@ -22,8 +22,8 @@
 </nav>
 <nav class="navbar navbar-light bg-light title-width">
     <div align="right">
-        {% for type in types %}
-        <a href="#{{type.title}}" class="btn btn-success">{{type.title}}</a>
+        {% for type in show_parts %}
+        <a href="#{{type}}" class="btn btn-success">{{type}}</a>
         {% endfor %}
     </div>
 </nav>
@@ -56,8 +56,11 @@
         </form>
     </div>
     <div class="menu">
-        {% for product in products %}
+        {% for parts in show_parts %}
+        <div id="{{parts}}"></div>
+        {% for product in show_parts[parts] %}
         {% include 'includes/product.html' %}
+        {% endfor %}
         {% endfor %}
     </div>
 </div>

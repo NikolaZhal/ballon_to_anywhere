@@ -40,7 +40,7 @@
                     <span class="product-description-title">{{product.product_group.title}}</span><br>
                     <span class="product-description-description">{{product.product_group.description}}</span><br>
                     <span class="product-description-color">{{product.color}}</span><br>
-                    <span class="product-description-color">{{product.cost}}</span>
+                    <span class="product-description-color">{% autoescape false %}{{product.get_price()}}{% endautoescape %}</span>
                 </div>
             </a>
         </div>

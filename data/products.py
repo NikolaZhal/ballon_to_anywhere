@@ -1,5 +1,3 @@
-import datetime
-
 import sqlalchemy
 from sqlalchemy import orm
 from sqlalchemy_serializer import SerializerMixin
@@ -23,5 +21,11 @@ class Products(SqlAlchemyBase, SerializerMixin):
 
     def get_img(self):
         return self.img.split(', ')
+
+    def get_price(self):
+        if self.sale == 0:
+            return str(self.cost)
+        return f'<del>{self.cost}</del> {self.cost - self.sale}'
+
     def __repr__(self):
         return f'<products> {self.id} {self.color}'
