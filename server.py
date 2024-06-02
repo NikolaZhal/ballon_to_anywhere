@@ -21,9 +21,10 @@ from data.products import Products
 from data.products_group import ProductGroup
 from data.types import Types
 from data.users import User
+from data.comments import Comments
 from email_sender import send_email
 from forms.orders import BasketForm, MakeOrder
-from forms.products import ProductForm, ProductGroupForm, SearchForm
+from forms.products import ProductForm, ProductGroupForm, SearchForm, CommentsForm
 from forms.types import TypeForm
 from forms.user import RegisterForm, LoginForm, ConfirmationForm
 
@@ -44,9 +45,11 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+
 @app.errorhandler(401)
 def unauthorized(e):
     return redirect('/login')
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -121,7 +124,7 @@ def search_get():
             turn = products + products_color
         else:
             turn = [db_sess.query(Products).join(Products.product_group).filter(
-                    Products.product_group.property.mapper.class_.type.in_(types_post))]
+                Products.product_group.property.mapper.class_.type.in_(types_post))]
         # return str(turn)
         if max_cost:
             # to_show = sorted(filter(lambda x: min_cost <= x.cost <= max_cost, set(turn)), key=lambda z: turn.index(z))
@@ -153,6 +156,23 @@ def show_product(product_group_id, product_id):
     product_group = db_sess.query(ProductGroup).filter(ProductGroup.id == product_group_id).first()
     product = db_sess.query(Products).filter(Products.id == product_id).first()
     return render_template('pages/show_product.html', title='product', product=product, product_group=product_group)
+
+
+@app.route('/comment_product/<int:product_group_id>/<int:product_id>', methods=['GET', 'POST'])
+def comment_product(product_group_id, product_id):
+    form = CommentsForm()
+    if form.validate_on_submit():
+        comment = Comments()
+        comment.plus = form.plus.data
+        comment.minus = form.minus.data
+        comment.content = form.content.data
+        comment.mark = form.mark.data
+        comment.product_group_id = int(product_group_id)
+        db_sess = db_session.create_session()
+        db_sess.add(comment)
+        db_sess.commit()
+        return redirect(f'/show_product/{product_group_id}/{product_id}')
+    return render_template('pages/comment_form.html', title='Комментарий', form=form)
 
 
 @app.route('/admin/types', methods=['GET', 'POST'])

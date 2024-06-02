@@ -20,5 +20,8 @@ class Comments(SqlAlchemyBase, SerializerMixin):
 
     user_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("users.id"))
     user = orm.relationship('User')
+
+    def show_data(self):
+        return f'{self.id}\n{self.content}\n{self.mark}\n{self.plus}\n{self.minus}\n{self.product_group_id}'
     def __repr__(self):
         return f'<comments> {self.id} {self.content}'
