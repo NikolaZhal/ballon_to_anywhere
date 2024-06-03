@@ -159,17 +159,32 @@ def show_product(product_group_id, product_id):
 
 
 @app.route('/comment_product/<int:product_group_id>/<int:product_id>', methods=['GET', 'POST'])
+@login_required
 def comment_product(product_group_id, product_id):
     form = CommentsForm()
-    if form.validate_on_submit():
-        comment = Comments()
+    if request.method == 'GET':
+        db_sess = db_session.create_session()
+        comment = db_sess.query(Comments).filter(Comments.product_group_id == product_group_id,  Comments.user_id == current_user.id).first()
+        if comment:
+            form.plus.data = comment.plus
+            form.minus.data = comment.minus
+            form.content.data = comment.content
+            form.mark.data = comment.mark
+    elif form.validate_on_submit():
+        db_sess = db_session.create_session()
+        comment = db_sess.query(Comments).filter(Comments.product_group_id == product_group_id,  Comments.user_id == current_user.id).first()
+        new = False
+        if not comment:
+            comment = Comments()
+            new = True
         comment.plus = form.plus.data
         comment.minus = form.minus.data
         comment.content = form.content.data
         comment.mark = form.mark.data
         comment.product_group_id = int(product_group_id)
-        db_sess = db_session.create_session()
-        db_sess.add(comment)
+        comment.user_id = int(current_user.id)
+        if new:
+            db_sess.add(comment)
         db_sess.commit()
         return redirect(f'/show_product/{product_group_id}/{product_id}')
     return render_template('pages/comment_form.html', title='Комментарий', form=form)
