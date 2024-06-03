@@ -513,7 +513,8 @@ def user_make_order():
             to_date=date,
             data=form.description.data,
             address=form.address.data,
-            how_pay=form.how_pay.data
+            how_pay=form.how_pay.data,
+            cost=cost
         )
         db_sess.add(order)
         db_sess.commit()
@@ -544,7 +545,7 @@ def make_order_text(order):
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.id == int(order.user_id)).first()
     answer += f'данные о пользователе:<br>{user.tel}<br>{user.email}<br>{user.name}<br><br>'
-    answer += f'данные о заказе:<br>Адрес:{order.address}<br>Время к которому доставить:{order.to_date}<br>Комментарий:<br><code>{order.data}</code><br><br>Товары:<br>'
+    answer += f'данные о заказе:<br>Стоимость:{order.cost}<br>Адрес:{order.address}<br>Время к которому доставить:{order.to_date}<br>Комментарий:<br><code>{order.data}</code><br><br>Товары:<br>'
     for item in ast.literal_eval(order.content):
         product = db_sess.query(Products).filter(Products.id == int(item)).first()
         answer += f'\nТовар: {product.product_group.title} {product.color}\nКоличество: {ast.literal_eval(order.content)[item]}\n'

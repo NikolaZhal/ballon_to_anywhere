@@ -5,7 +5,7 @@
 <h4>Заказ на сумму: {{cost}}</h4>
 {% for product in products%}
 <div>
-    {{ product.product_group.title }} {{ product.color }} {{ product.cost }} х {{ content[product.id] }}
+    {{ product.product_group.title }} {{ product.color }} {% autoescape false %}{{product.get_price()}}{% endautoescape %} х {{ content[product.id] }}
 </div>
 {% endfor %}
 <form action="" method="post">
