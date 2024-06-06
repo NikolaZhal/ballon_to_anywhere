@@ -96,6 +96,7 @@ th {
     flex-wrap: wrap;
     padding: 5vh;
     padding-top: 0;
+    //border: 5px solid rgb(0 0 0);
 }
 
 
@@ -267,24 +268,25 @@ article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
     margin-bottom: 1.5rem;
   }
 
-.container {
+.my-container {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   min-width: 98vw;
   justify-content: space-evenly;
+
 }
 
 main {
-  flex: 1;
-  max-width: 98vw;
-  justify-content: center;
-  display: block;
-     margin: 0 auto;
-     text-align: left;
+    flex: 1;
+    min-width: 95%;
+    justify-content: center;
+    display: block;
+    margin: 0 auto;
+    text-align: left;
 }
 .title-width{
-min-width: 85vw;
+min-width: 100%;
 /*
 display: block;
 justify-content: center;

@@ -25,17 +25,17 @@
         {% endfor %}
     </div>
 </nav>
-
+<div class="menu">
 {% for type in types %}
 <div id="{{type.title}}"></div>
-<div class="menu">
+
     {% for group_product in type.products %}
     {% for product in group_product.products %}
     {% include 'includes/product.html' %}
     {% endfor %}
     {% endfor %}
-</div>
+
 
 {% endfor %}
-
+</div>
 {% endblock %}

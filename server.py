@@ -22,6 +22,7 @@ from data.products_group import ProductGroup
 from data.types import Types
 from data.users import User
 from data.comments import Comments
+from data.category import Category
 from email_sender import send_email
 from forms.orders import BasketForm, MakeOrder
 from forms.products import ProductForm, ProductGroupForm, SearchForm, CommentsForm
@@ -45,6 +46,15 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+@app.errorhandler(404)
+def undefind(e):
+    # db_sess = db_session.create_session()
+    # category = db_sess.query(Category).filter(Category.id == 1).first()
+    # product = db_sess.query(Products).filter(Products.id == 2).first()
+    # category.products.append(product)
+    # db_sess.commit()
+    return ('no fiend'
+            '')
 
 @app.errorhandler(401)
 def unauthorized(e):
@@ -188,6 +198,35 @@ def comment_product(product_group_id, product_id):
         db_sess.commit()
         return redirect(f'/show_product/{product_group_id}/{product_id}')
     return render_template('pages/comment_form.html', title='Комментарий', form=form)
+
+# @app.route('/admin/category', methods=['GET', 'POST'])
+# @login_required
+# def admin_types():
+#     if current_user.admin:
+#         filenames = ['']
+#         form = TypeForm()
+#         db_sess = db_session.create_session()
+#         types = db_sess.query(Types).all()
+#
+#         if form.validate_on_submit():
+#             # добавление продукта
+#             type = Types()
+#             type.title = form.title.data
+#             form.title.data = ''
+#             db_sess = db_session.create_session()
+#             db_sess.add(type)
+#             db_sess.commit()
+#             return redirect('/admin/types')
+#         if request.method == "POST":
+#             db_sess = db_session.create_session()
+#             for id in request.form:
+#                 type = db_sess.query(Types).filter(Types.id == id).first()
+#                 type.title = request.form[id]
+#                 db_sess.commit()
+#                 # request.form[id] = ''
+#             return redirect('/admin/types')
+#         return render_template('pages/admin_types.html', title='Админ панель',
+#                                types=types, form=form)
 
 
 @app.route('/admin/types', methods=['GET', 'POST'])

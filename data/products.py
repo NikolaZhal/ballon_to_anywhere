@@ -18,6 +18,9 @@ class Products(SqlAlchemyBase, SerializerMixin):
     img = sqlalchemy.Column(sqlalchemy.String, default='0_0_0_none.jpg')
     product_group_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("product_group.id"))
     product_group = orm.relationship('ProductGroup')
+    category = orm.relationship("Category",
+                                  secondary="products_to_category",
+                                  backref="products")
 
     def get_img(self):
         return self.img.split(', ')
