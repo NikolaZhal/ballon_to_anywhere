@@ -1,0 +1,52 @@
+{% extends "pages/base_admin.html" %}
+
+{% block admincontent %}
+<div>
+    <form action="" method="post" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <div>
+            {{ form.csrf_token }}
+        </div>
+        <nav>
+            <div>
+                {{ form.title.label() }}
+                {{ form.title(class="form-control")}}
+                {% for error in form.title.errors %}
+                <div class="error">{{ error }}</div>
+                {% endfor %}
+
+            </div>
+            <div>
+                {{ form.img(class="btn btn-secondary")}}
+                {% for error in form.img.errors %}
+                <div class="error">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div> {{ form.submit(type="submit", class="btn btn-primary") }}</div>
+        </nav>
+
+    </form>
+</div>
+<br>
+<div>
+    <table>
+        <tr>
+            <th>id</th>
+            <th>Категория</th>
+            <th>Фото</th>
+        </tr>
+        {% for category in categories %}
+        <tr>
+            <td>{{ category.id }}</td>
+            <td>{{ category.title }}</td>
+            <td id="imgTd">
+                {% if category.img%}
+                <img src="/static/img/products/{{category.img}}" class="admin-img-delete"
+                     alt="404 картинка не нашлась(">
+                {%endif%}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

@@ -17,7 +17,5 @@ class Category(SqlAlchemyBase):
     __tablename__ = 'category'
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True,
                            autoincrement=True)
-    name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    # products = orm.relationship("Products",
-    #                             secondary="products_to_category",
-    #                             backref="category")
+    title = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    img = sqlalchemy.Column(sqlalchemy.String, default='0_0_0_none.jpg')
