@@ -24,7 +24,7 @@ class ProductGroupForm(FlaskForm):
     title = StringField('Название продукта (цветовой группы)', validators=[DataRequired()])
     description = TextAreaField('Описание продукта (цветовой группы)', validators=[DataRequired()])
     type = SelectField('Тип продукта (цветовой группы)', coerce=int, choices=[(-1, 'Если необходимо создайте тип')])
-    submit = SubmitField('Создать продукт')
+    submit = SubmitField('Подтвердить')
 
     def __init__(self, *args, types=[], **kwargs):
         super().__init__(*args, **kwargs)
@@ -37,17 +37,19 @@ class ProductForm(FlaskForm):
                                 choices=[(-1, 'Если необходимо создайте новую группу')]
                                 )
     cost = IntegerField("Стоимость в рублях", validators=[DataRequired()])
-    sale = IntegerField('Скидка (- n Р)', validators=[DataRequired()], default=0)
+    sale = IntegerField('Скидка (- n Р)', validators=[], default=0)
     remains = IntegerField('Остаток продукта', validators=[DataRequired()])
     imgs = MultiCheckboxField('Изображение', choices=[(-1, 'Нет изображений')])
     img = MultipleFileField(validators=[])
+    categories = MultiCheckboxField(validators=[])
 
-    submit = SubmitField('Создать цвет продукта')
+    submit = SubmitField('Подтвердить')
 
-    def __init__(self, *args, product_groups=[], imgs_data=[], must_upload=True, **kwargs):
+    def __init__(self, *args, product_groups=[], imgs_data=[], categories=[], must_upload=True, **kwargs):
         super().__init__(*args, **kwargs)
         self.product_group.choices.extend(product_groups)
         self.imgs.choices = imgs_data
+        self.categories.choices = categories
         if not must_upload:
             self.img.validators = []
 

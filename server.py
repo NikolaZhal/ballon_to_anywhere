@@ -50,8 +50,8 @@ login_manager.init_app(app)
 def undefiend(e):
     # db_sess = db_session.create_session()
     # category = db_sess.query(Category).filter(Category.id == 1).first()
-    # product = db_sess.query(Products).filter(Products.id == 2).first()
-    # category.products.append(product)
+    # product = db_sess.query(Products).filter(Products.id == 1).first()
+    # product.category.append(category)
     # db_sess.commit()
     return ('no fiend'
             '')
@@ -313,8 +313,8 @@ def add_productgroup():
     db_sess = db_session.create_session()
     types = db_sess.query(Types).all()
     types_data = []
-    for i in types:
-        types_data.append((i.id, i.title))
+    for type in types:
+        types_data.append((type.id, type.title))
     form = ProductGroupForm(types=types_data)
     if form.validate_on_submit():
         productgroup = ProductGroup()
@@ -388,9 +388,13 @@ def add_product(sender):
     db_sess = db_session.create_session()
     product_groups = db_sess.query(ProductGroup).all()
     product_groups_data = []
-    for i in product_groups:
-        product_groups_data.append((i.id, i.title))
-    form = ProductForm(product_groups=product_groups_data)
+    for group in product_groups:
+        product_groups_data.append((group.id, group.title))
+    categories = db_sess.query(Category).all()
+    categories_data = []
+    for category in categories:
+        categories_data.append((category.id, category.title))
+    form = ProductForm(product_groups=product_groups_data, categories=categories_data)
     if request.method == "GET" and sender != -1:
         form.product_group.data = int(sender)
     if form.validate_on_submit():
@@ -404,6 +408,7 @@ def add_product(sender):
         product.cost = int(form.cost.data)
         product.remains = int(form.remains.data)
         db_sess = db_session.create_session()
+        product.category.extend(db_sess.query(Category).filter(Category.id.in_(form.categories.data)))
         db_sess.add(product)
         db_sess.commit()
         if form.img.data[0].filename:
@@ -455,11 +460,16 @@ def edit_product(product_id, sender):
     if product.img:
         product.img.split(', ')
     choises = []
+
     if product.img:
         for elem in product.img:
             choises.append((elem, elem))
+    categories = db_sess.query(Category).all()
+    categories_data = []
+    for category in categories:
+        categories_data.append((category.id, category.title))
     form = ProductForm(imgs_data=all_imgs, product_groups=groups_data, must_upload=False,
-                       product_group=product.product_group_id)
+                       product_group=product.product_group_id, categories=categories_data)
     if request.method == "GET":
         form.color.data = product.color
         form.product_group.data = product.product_group_id
