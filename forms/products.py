@@ -41,7 +41,7 @@ class ProductForm(FlaskForm):
     remains = IntegerField('Остаток продукта', validators=[DataRequired()])
     imgs = MultiCheckboxField('Изображение', choices=[(-1, 'Нет изображений')])
     img = MultipleFileField(validators=[])
-    categories = MultiCheckboxField(validators=[])
+    categories = MultiCheckboxField(validators=[], coerce=int)
 
     submit = SubmitField('Подтвердить')
 
@@ -52,6 +52,7 @@ class ProductForm(FlaskForm):
         self.categories.choices = categories
         if not must_upload:
             self.img.validators = []
+
 
 
 class CommentsForm(FlaskForm):

@@ -48,11 +48,11 @@ login_manager.init_app(app)
 
 @app.errorhandler(404)
 def undefiend(e):
-    # db_sess = db_session.create_session()
-    # category = db_sess.query(Category).filter(Category.id == 1).first()
-    # product = db_sess.query(Products).filter(Products.id == 1).first()
-    # product.category.append(category)
-    # db_sess.commit()
+    db_sess = db_session.create_session()
+    category = db_sess.query(Category).all()
+    product = db_sess.query(Products).filter(Products.id == 9).first()
+    product.category = category
+    db_sess.commit()
     return ('no fiend'
             '')
 
@@ -457,13 +457,6 @@ def edit_product(product_id, sender):
     product = db_sess.query(Products).filter(Products.id == product_id).first()
     if not product:
         abort(404)
-    if product.img:
-        product.img.split(', ')
-    choises = []
-
-    if product.img:
-        for elem in product.img:
-            choises.append((elem, elem))
     categories = db_sess.query(Category).all()
     categories_data = []
     for category in categories:
@@ -475,8 +468,9 @@ def edit_product(product_id, sender):
         form.product_group.data = product.product_group_id
         form.sale.data = product.sale
         form.cost.data = product.cost
-        form.imgs.data = product.img
+        form.imgs.data = product.get_img()
         form.remains.data = product.remains
+        form.categories.data = product.get_categories_id()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         product = db_sess.query(Products).filter(Products.id == product_id).first()

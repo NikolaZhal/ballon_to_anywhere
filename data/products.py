@@ -19,8 +19,8 @@ class Products(SqlAlchemyBase, SerializerMixin):
     product_group_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("product_group.id"))
     product_group = orm.relationship('ProductGroup')
     category = orm.relationship("Category",
-                                  secondary="products_to_category",
-                                  backref="products")
+                                secondary="products_to_category",
+                                backref="products")
 
     def get_img(self):
         return self.img.split(', ')
@@ -29,6 +29,9 @@ class Products(SqlAlchemyBase, SerializerMixin):
         if self.sale == 0:
             return str(self.cost)
         return f'<del>{self.cost}</del> {self.cost - self.sale}'
+
+    def get_categories_id(self):
+        return [i.id for i in self.category]
 
     def __repr__(self):
         return f'<products> {self.id} {self.color}'
