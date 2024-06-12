@@ -398,7 +398,7 @@ def add_product(sender):
     if request.method == "GET" and sender != -1:
         form.product_group.data = int(sender)
     if form.validate_on_submit():
-        if form.product_group.data == '-1':
+        if form.product_group.data == -1:
             return render_template("pages/add_product.html", data={'change': '0'}, form=form, title='добавление товара',
                                    message='выберите группу товара')
         product = Products()
@@ -481,6 +481,7 @@ def edit_product(product_id, sender):
             product.cost = form.cost.data
             product.remains = form.remains.data
             product.img = ', '.join(form.imgs.data)
+            product.category = db_sess.query(Category).filter(Category.id.in_(form.categories.data)).all()
             if form.img.data[0].filename != '':
 
                 files_filenames = []
@@ -515,6 +516,9 @@ def remove_item(type, id, sender):
     if current_user.admin:
         if type == 'products':
             db_sess = db_session.create_session()
+            product = db_sess.query(Products).filter(Products.id == id).first()
+            product.category = []
+            db_sess.commit()
             db_sess.query(Products).filter(Products.id == id).delete()
             db_sess.commit()
             redirect_address = '/admin/products'
