@@ -48,11 +48,11 @@ login_manager.init_app(app)
 
 @app.errorhandler(404)
 def undefiend(e):
-    db_sess = db_session.create_session()
-    category = db_sess.query(Category).all()
-    product = db_sess.query(Products).filter(Products.id == 9).first()
-    product.category = category
-    db_sess.commit()
+    # db_sess = db_session.create_session()
+    # category = db_sess.query(Category).all()
+    # product = db_sess.query(Products).filter(Products.id == 9).first()
+    # product.category = category
+    # db_sess.commit()
     return ('no fiend'
             '')
 
@@ -64,7 +64,7 @@ def unauthorized(e):
 @login_manager.user_loader
 def load_user(user_id):
     db_sess = db_session.create_session()
-    return db_sess.query(User).get(user_id)
+    return db_sess.query(User).filter(User.id == user_id).first()
 
 
 @app.route("/", methods=['GET'])
