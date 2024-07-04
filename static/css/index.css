@@ -1,0 +1,24 @@
+.search-all{
+    //background: #00ff00;
+    display: grid;
+    grid-template-columns: 3fr 9fr 1fr;
+    grid-template-areas: "space string button";
+    justify-content: center;
+}
+.search-string{
+ grid-area: string;
+   border: 1px solid black;
+  border-radius: 5px;
+}
+.search-button{
+ grid-area: button;
+}
+.index-navbar{
+  display: grid;
+  grid-template-columns: 4fr 1fr;
+  //background: #ff0000;
+  width: 100%;
+  justify-content: center;
+}
+//.index-nav-bar{
+//}

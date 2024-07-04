@@ -1,21 +1,28 @@
 {% extends "base.html" %}
 
 {% block content %}
-<nav class="navbar navbar-light bg-light title-width">
-    <div align="left">
-        <h1>Товарчики</h1>
-    </div>
-    <div align="right">
-        <form method="POST">
-            <input type="text" id="text" name="text" class="form-control" align="left"/>
-            <input type="submit" value="Поиск" class="btn btn-primary" align="right"/>
-        </form>
 
-    </div>
-    <div align="right">
-        <a href="/basket">
-            <div class="basket-button"></div>
-        </a>
+<nav class="navbar navbar-light bg-light">
+    <div class="index-navbar">
+        <!--    <div align="center" class="search">-->
+        <div align="right">
+            <form method="POST">
+                <div class="search-all">
+                    <div align="right" class="search-string">
+                        <input type="text" id="text" name="text" class="form-control"/>
+                    </div>
+                    <div class="search-button">
+                        <input type="submit" value="Поиск" class="btn btn-primary"/>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+        <div align="right">
+            <a href="/basket">
+                <div class="basket-button"></div>
+            </a>
+        </div>
     </div>
 </nav>
 <nav class="navbar navbar-light bg-light title-width">
@@ -26,8 +33,8 @@
     </div>
 </nav>
 <div class="menu">
-{% for type in types %}
-<div id="{{type.title}}"></div>
+    {% for type in types %}
+    <div id="{{type.title}}"></div>
 
     {% for group_product in type.products %}
     {% for product in group_product.products %}
@@ -36,6 +43,6 @@
     {% endfor %}
 
 
-{% endfor %}
+    {% endfor %}
 </div>
 {% endblock %}

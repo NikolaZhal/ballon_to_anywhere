@@ -216,6 +216,12 @@ def admin_categories():
             db_sess = db_session.create_session()
             db_sess.add(categories)
             db_sess.commit()
+            file = form.img.data
+            data_filename = secure_filename(file.filename)
+            data_filename = f"{categories.id}_{0}_{datetime.now().date()}.{data_filename.split('.')[-1]}"
+            file.save(os.path.join('./static/img/categories', data_filename))
+            categories.img = data_filename
+            db_sess.commit()
             return redirect('/admin/categories')
         if request.method == "POST":
             db_sess = db_session.create_session()
@@ -521,6 +527,14 @@ def remove_item(type, id, sender):
             db_sess.commit()
             db_sess.query(Products).filter(Products.id == id).delete()
             db_sess.commit()
+
+            mypath = "./static/img/products"
+            onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+            product_imgs = list(
+                filter(lambda x: (x.endswith(".jpg") or x.endswith(".png")) and x.split('_')[0] == str(id),
+                       onlyfiles))
+            for img_name in product_imgs:
+                os.remove(f"{mypath}/{img_name}")
             redirect_address = '/admin/products'
             if sender != '-1':
                 redirect_address = f'/admin/products-productgroup/{sender}'
@@ -529,7 +543,17 @@ def remove_item(type, id, sender):
             db_sess = db_session.create_session()
             product_group = db_sess.query(ProductGroup).filter(ProductGroup.id == id).first()
             for color in product_group.products:
+                product = db_sess.query(Products).filter(Products.id == color.id).first()
+                product.category = []
+                db_sess.commit()
                 db_sess.query(Products).filter(Products.id == color.id).delete()
+                mypath = "./static/img/products"
+                onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+                product_imgs = list(
+                    filter(lambda x: (x.endswith(".jpg") or x.endswith(".png")) and x.split('_')[0] == str(color.id),
+                           onlyfiles))
+                for img_name in product_imgs:
+                    os.remove(f"{mypath}/{img_name}")
             db_sess.query(ProductGroup).filter(ProductGroup.id == id).delete()
             db_sess.commit()
             return redirect('/admin/productsgroups')
