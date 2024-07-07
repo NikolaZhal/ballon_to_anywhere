@@ -23,6 +23,15 @@ html {
     --gray-100: #EEF1F3;
     --gray-50: #F6F8F9;
 }
+
+main{
+    background-image: url("./main_background.jpg");
+    background-size: no-repeat;
+    background-position: center;
+    background-size: cover;
+    height: 100%;
+    width: 100%;
+}
 h4{
   padding-left: 20px;
 
@@ -55,8 +64,8 @@ h4{
     margin: 5px 5px;
 }
 .basket-button {
-    width: 3vh;
-    height: 3vh;
+    width: 5vh;
+    height: 5vh;
     border: none;
     background-image: url('../img/system/cart_icon.png');
     background-size: cover;

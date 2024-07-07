@@ -21,13 +21,15 @@ text-decoration:none;
 .product-img-place {
   grid-column: 1 / 2;
   //grid-row: 1 / 2;
-  width: 30vh;
-  height: 30vh;
+  width: 27vh;
+  height: 27vh;
  }
 .product-img {
   height: 25vh;
-  border-radius: 20px;
+  width: 25vh;
+  border-radius: 5px;
   object-fit: cover;
+
 }
 .product-description {
   grid-column: 2 / 3;
