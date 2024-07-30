@@ -22,15 +22,54 @@ html {
     --gray-150: #AEB6BB;
     --gray-100: #EEF1F3;
     --gray-50: #F6F8F9;
+    --framing:  black;
+    --text-color: white;
 }
-
-main{
+main {
+    flex: 1;
+    min-width: 95%;
+    justify-content: center;
+    display: block;
+    margin: 0 auto;
+    text-align: left;
+}
+/**/
+.main-background{
     background-image: url("./main_background.jpg");
     background-size: no-repeat;
     background-position: center;
     background-size: cover;
     height: 100%;
     width: 100%;
+}
+
+.my-container {
+  /*
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  */
+  min-height: 100vh;
+  min-width: 100%;
+}
+.fashion-text{
+  text-shadow:
+    1px 1px 0 var(--framing),
+    1px 1px 0 var(--framing),
+    1px -1px 0 var(--framing),
+    -1px 1px 0 var(--framing),
+    -1px -1px 0 var(--framing);
+
+  color: var(--text-color);
+  transition: all 1s;
+
+      font-size: 1rem;
+    font-family: cursive;
+    text-align: left;
+}
+
+.admin-background{
+    background-color: rgb(255, 255, 255)
 }
 h4{
   padding-left: 20px;
@@ -87,17 +126,21 @@ h4{
 thead {
     background : #aaaaaa;
 }
-
+/*
 table {
     border-collapse: collapse;
     border: 2px solid rgb(200, 200, 200);
     letter-spacing: 1px;
 }
+*/
+/*
 td,
 th {
     border: 1px solid rgb(190, 190, 190);
     padding: 10px 20px;
+
 }
+*/
 .menu {
     display: flex;
     justify-content: space-around;
@@ -236,11 +279,7 @@ footer {
     background-color: var(--black);
     color: #212529;
 }
-/*
-article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
-    display: block;
-}
-*/
+
 .row {
     display: -webkit-box;
     display: -webkit-flex;
@@ -277,23 +316,7 @@ article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
     margin-bottom: 1.5rem;
   }
 
-.my-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  min-width: 98vw;
-  justify-content: space-evenly;
 
-}
-
-main {
-    flex: 1;
-    min-width: 95%;
-    justify-content: center;
-    display: block;
-    margin: 0 auto;
-    text-align: left;
-}
 .title-width{
 min-width: 100%;
 /*
@@ -319,11 +342,16 @@ justify-content: center;
     //height: 100vh;
     margin: auto;
     display:grid;
-    grid-template-columns: 100px 1fr;
+    grid-template-columns: 7vw 1fr;
     gap:10;
     grid-auto-flow: column;
 }
+
 .sidebar{
+/*
+    background-color: #F0F8FF;
+   //padding-left: 150px;
+   */
 
 }
 

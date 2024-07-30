@@ -405,7 +405,7 @@ def add_product(sender):
         form.product_group.data = int(sender)
     if form.validate_on_submit():
         if form.product_group.data == -1:
-            return render_template("pages/add_product.html", data={'change': '0'}, form=form, title='добавление товара',
+            return render_template("pages/admin_add_product.html", data={'change': '0'}, form=form, title='добавление товара',
                                    message='выберите группу товара')
         product = Products()
         product.product_group_id = form.product_group.data
@@ -437,7 +437,7 @@ def add_product(sender):
 
     mypath = "./static/img"
     data = {'change': '0'}
-    return render_template("pages/add_product.html", data=data, form=form, title='добавление товара')
+    return render_template("pages/admin_add_product.html", data=data, form=form, title='добавление товара')
 
 
 @app.route('/admin/edit-product/<int:product_id>/', defaults={'sender': -1}, methods=['GET', 'POST'])
@@ -511,7 +511,7 @@ def edit_product(product_id, sender):
     db_sess = db_session.create_session()
     product = db_sess.query(Products).filter(Products.id == product_id).first()
     data = {'change': '1', 'img': product.img}
-    return render_template('pages/add_product.html',
+    return render_template('pages/admin_add_product.html',
                            title='Редактирование товара',
                            form=form, data=data
                            )

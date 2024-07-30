@@ -1,27 +1,29 @@
 {% extends "base.html" %}
 
 {% block content %}
-<!--<div>-->
-<!--    {% if current_user.is_authenticated %}-->
-<!--    <a href="/admin/product" class="btn btn-secondary">Добавить товар</a>-->
-<!--    {% endif %}-->
-<!--</div>-->
-<br>
-<div>
-    <table>
-        <tr>
-            <th><a href="/admin/productsgroups" class="btn btn-secondary">Группы товаров</a></th>
-            <th><a href="/admin/products" class="btn btn-secondary">Товары</a></th>
-            <th><a href="/admin/types" class="btn btn-secondary">Типы</a></th>
-            <th><a href="/admin/categories" class="btn btn-secondary">Категории</a></th>
-            <th><a href="/admin/orders" class="btn btn-secondary">Заказы</a></th>
-            <th><a href="/admin/users" class="btn btn-secondary">Покупатели</a></th>
-        </tr>
-    </table>
-</div>
-<div>
+<div class="admin-background">
+    <!--<div>-->
+    <!--    {% if current_user.is_authenticated %}-->
+    <!--    <a href="/admin/product" class="btn btn-secondary">Добавить товар</a>-->
+    <!--    {% endif %}-->
+    <!--</div>-->
+    <br>
+    <div>
+        <table>
+            <tr>
+                <th><a href="/admin/productsgroups" class="btn btn-secondary">Группы товаров</a></th>
+                <th><a href="/admin/products" class="btn btn-secondary">Товары</a></th>
+                <th><a href="/admin/types" class="btn btn-secondary">Типы</a></th>
+                <th><a href="/admin/categories" class="btn btn-secondary">Категории</a></th>
+                <th><a href="/admin/orders" class="btn btn-secondary">Заказы</a></th>
+                <th><a href="/admin/users" class="btn btn-secondary">Покупатели</a></th>
+            </tr>
+        </table>
+    </div>
+    <div>
 
-    {% block admincontent %}{% endblock %}
+        {% block admincontent %}{% endblock %}
 
+    </div>
 </div>
 {% endblock %}
