@@ -1,0 +1,40 @@
+.main-rating{
+font-size: 5vw;
+display: flex;
+flex-direction: row-reverse;
+justify-content: flex-end;
+}
+
+.rating {
+display: none;
+}
+
+label[class="rlabel"]{
+cursor: pointer;
+position: relative;
+color: yellow;
+}
+
+label[class="rlabel"]:before {
+content: '★';
+position: absolute;
+opacity: 0;
+}
+
+label[class="rlabel"]:hover:before,
+label[class="rlabel"]:hover ~ label:before {
+opacity: 1 !important;
+}
+input[class="rating"]:checked + label[class="rlabel"]:before,
+input[class="rating"]:checked ~ label[class="rlabel"]:before{
+opacity: 1;
+}
+.main-rating:hover input[class="rating"]:checked ~
+label[class="rlabel"]:before {
+opacity: 0.3;
+}
+
+.main-rating input[class="rating"]:checked ~
+label[class="rlabel"]:before {
+opacity: 1;
+}

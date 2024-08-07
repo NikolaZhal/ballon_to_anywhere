@@ -59,5 +59,5 @@ class CommentsForm(FlaskForm):
     plus = StringField('Плюсы товара', validators=[])
     minus = StringField('Минусы товара', validators=[])
     content = StringField('Комментарий', validators=[])
-    mark = RadioField("Оценка от 0 до 5", coerce=int, choices=[(i, f'{i}') for i in range(1, 6)], validators=[DataRequired()])
+    mark = RadioField("Оценка от 0 до 5", coerce=int, choices=[(i, f'{i}') for i in range(5, 0, -1)], validators=[DataRequired()])
     submit = SubmitField('Отправить')

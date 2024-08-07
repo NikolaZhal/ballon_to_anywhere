@@ -42,19 +42,31 @@ main {
     height: 100%;
     width: 100%;
 }
+body {
+  min-height: 100vh; /* Страница всегда имеет необходимый размер */
+  position: relative; /* Определяет позиционирование элементов внутри */
+}
+
+footer {
+  position: absolute;
+  bottom: -200px;
+  width: 100%;
+}
+
+
 
 .my-container {
-  /*
+ /*
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
-  */
+
   min-height: 100vh;
+ */
   min-width: 100%;
 }
 .fashion-text{
   text-shadow:
-    1px 1px 0 var(--framing),
     1px 1px 0 var(--framing),
     1px -1px 0 var(--framing),
     -1px 1px 0 var(--framing),
@@ -64,7 +76,7 @@ main {
   transition: all 1s;
 
       font-size: 1rem;
-    font-family: cursive;
+    //font-family: cursive;
     text-align: left;
 }
 

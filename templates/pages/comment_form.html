@@ -1,11 +1,14 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='css/star.css') }}">
+
 {% extends "base.html" %}
+
 {% block content %}
 <form action="" method="post">
     {{ form.hidden_tag() }}
     <div>
         {{ form.csrf_token }}
     </div>
-    {% for field in form if field.name not in ['csrf_token', 'submit'] %}
+    {% for field in form if field.name not in ['csrf_token', 'submit', 'mark'] %}
     <div>
         {{ field.label() }}
         {{ field(class="form-control")}}
@@ -14,6 +17,14 @@
         {% endfor %}
     </div>
     {% endfor %}
+    <div class="main-rating">
+        {% for string  in form.mark %}
+        {{string(class="rating")}}
+        <label for="mark-{{loop.index0}}" class="rlabel">☆</label>
+        {% endfor%}
+    </div>
+
+
     <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
     {{message}}
 </form>
