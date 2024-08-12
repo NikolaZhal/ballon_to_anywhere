@@ -19,3 +19,6 @@ class Category(SqlAlchemyBase):
                            autoincrement=True)
     title = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     img = sqlalchemy.Column(sqlalchemy.String, default='0_0_0_none.jpg')
+
+    def get_products_id(self):
+        return str([i.id for i in self.products])

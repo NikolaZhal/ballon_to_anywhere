@@ -1,3 +1,11 @@
+.index-category-menu{
+    display: flex;
+    justify-content: space-evenly;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  min-height: 100%;
+}
+
 .search-all{
     //background: #00ff00;
     display: grid;
@@ -22,3 +30,15 @@
 }
 //.index-nav-bar{
 //}
+.category-img-place {
+  width: 41vh;
+  height: 41vh;
+ margin: 2vh;
+ }
+.category-img {
+  height: 40vh;
+  width: 40vh;
+  border-radius: 5px;
+  object-fit: cover;
+
+}

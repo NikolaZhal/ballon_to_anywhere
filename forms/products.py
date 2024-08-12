@@ -13,11 +13,14 @@ class SearchForm(FlaskForm):
     min_cost = StringField('Цена От', validators=[], default='0')
     max_cost = StringField('Цена До', validators=[])
     types = MultiCheckboxField('Типы товаров', coerce=int, choices=[(-1, 'Все')])
+    categories = RadioField("Категории", coerce=int, choices=[(-1, 'Все')],
+                      default=-1)
     submit = SubmitField('Показать')
 
-    def __init__(self, *args, types_data=[], **kwargs):
+    def __init__(self, *args, types_data=[], categories_data=[], **kwargs):
         super().__init__(*args, **kwargs)
         self.types.choices.extend(types_data)
+        self.categories.choices.extend(categories_data)
 
 
 class ProductGroupForm(FlaskForm):
@@ -56,8 +59,8 @@ class ProductForm(FlaskForm):
 
 
 class CommentsForm(FlaskForm):
-    plus = StringField('Плюсы товара', validators=[])
-    minus = StringField('Минусы товара', validators=[])
-    content = StringField('Комментарий', validators=[])
+    plus = TextAreaField('Плюсы товара', validators=[])
+    minus = TextAreaField('Минусы товара', validators=[])
+    content = TextAreaField('Комментарий', validators=[])
     mark = RadioField("Оценка от 0 до 5", coerce=int, choices=[(i, f'{i}') for i in range(5, 0, -1)], validators=[DataRequired()])
     submit = SubmitField('Отправить')

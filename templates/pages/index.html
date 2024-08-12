@@ -25,24 +25,14 @@
             </div>
         </div>
     </nav>
-    <nav class="navbar navbar-light bg-light title-width">
-        <div align="right">
-            {% for type in types %}
-            <a href="#{{type.title}}" class="btn btn-success">{{type.title}}</a>
-            {% endfor %}
+    <div class="index-category-menu">
+        {% for category in categories %}
+        <div class="category-img-place">
+            <a href="/search?category={{category.id}}">
+                <img class="d-block category-img" src="/static/img/categories/{{category.img}}"
+                     alt="{{category.img}}">
+            </a>
         </div>
-    </nav>
-    <div class="menu">
-        {% for type in types %}
-        <div id="{{type.title}}"></div>
-
-        {% for group_product in type.products %}
-        {% for product in group_product.products %}
-        {% include 'includes/product.html' %}
-        {% endfor %}
-        {% endfor %}
-
-
         {% endfor %}
     </div>
 </div>

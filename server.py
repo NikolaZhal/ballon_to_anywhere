@@ -16,13 +16,13 @@ from werkzeug.utils import secure_filename
 import products_api
 from bot import send_info
 from data import db_session
+from data.category import Category
+from data.comments import Comments
 from data.orders import Order
 from data.products import Products
 from data.products_group import ProductGroup
 from data.types import Types
 from data.users import User
-from data.comments import Comments
-from data.category import Category
 from email_sender import send_email
 from forms.orders import BasketForm, MakeOrder
 from forms.products import ProductForm, ProductGroupForm, SearchForm, CommentsForm
@@ -46,6 +46,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+
 @app.errorhandler(404)
 def undefiend(e):
     # db_sess = db_session.create_session()
@@ -55,6 +56,7 @@ def undefiend(e):
     # db_sess.commit()
     return ('no fiend'
             '')
+
 
 @app.errorhandler(401)
 def unauthorized(e):
@@ -72,12 +74,13 @@ def load_user(user_id):
 def index_get():
     db_sess = db_session.create_session()
     types = db_sess.query(Types).all()
+    categories = db_sess.query(Category).all()
     # for type in types:
     #     for product in type.products:
     #         for product_color in product.products:
     #             if product_color.img:
     #                 product_color.img = product_color.img.split(', ')
-    return render_template('pages/index.html', types=types, view='nocube')
+    return render_template('pages/index.html', types=types, categories=categories, view='nocube')
 
 
 @app.route("/", methods=['POST'])
@@ -99,17 +102,22 @@ def search_get():
     db_sess = db_session.create_session()
     types_db = db_sess.query(Types).all()
     types_data = [(i.id, i.title) for i in types_db]
-    form = SearchForm(types_data=types_data)
+    categories_db = db_sess.query(Category).all()
+    categories_data = [(i.id, i.title) for i in categories_db]
+    form = SearchForm(types_data=types_data, categories_data=categories_data)
     if form.validate_on_submit():
         text = request.form.get("text", default="", type=str)
         min_cost = form.min_cost.data
         max_cost = form.max_cost.data
+        category = form.categories.data
         types = ', '.join([str(i) for i in form.types.data]) or -1
-        return redirect(f'/search?text={text}&min_cost={min_cost}&max_cost={max_cost}&types={types}')
+        return redirect(
+            f'/search?text={text}&min_cost={min_cost}&max_cost={max_cost}&types={types}&category={category}#1')
     elif request.method == 'GET':
         text = request.args.get("text", default="", type=str)
         min_cost = request.args.get("min_cost", default=0, type=int)
         max_cost = request.args.get("max_cost", type=int)
+        category = request.args.get("category", type=int, default=-1)
         types_post = [int(i) for i in request.args.get("types", default='-1', type=str).split(', ')]
         # настройка формы
         if -1 in types_post:
@@ -117,6 +125,7 @@ def search_get():
         form.types.data = types_post
         form.min_cost.data = min_cost
         form.max_cost.data = max_cost
+        form.categories.data = category
 
         products = []
         products_color = []
@@ -128,6 +137,9 @@ def search_get():
                     (Products.product_group.property.mapper.class_.title.like(f'%{word}%')) | (
                         Products.product_group.property.mapper.class_.description.like(f'%{word}%'))).filter(
                     Products.product_group.property.mapper.class_.type.in_(types_post)))
+
+                Category.id.in_(form.categories.data)
+
                 products_color.append(db_sess.query(Products).join(Products.product_group).filter(
                     Products.product_group.property.mapper.class_.type.in_(types_post)).filter(
                     Products.color.like(f'%{word}%')))
@@ -135,7 +147,11 @@ def search_get():
         else:
             turn = [db_sess.query(Products).join(Products.product_group).filter(
                 Products.product_group.property.mapper.class_.type.in_(types_post))]
-        # return str(turn)
+        #
+        if category != -1:
+            for i, item in enumerate(turn):
+                # .filter(ZKUser.groups.any(ZKGroup.id.in_([1, 2, 3])))
+                turn[i] = item.filter(Products.category.any(Category.id.in_([1, 2, 3])))
         if max_cost:
             # to_show = sorted(filter(lambda x: min_cost <= x.cost <= max_cost, set(turn)), key=lambda z: turn.index(z))
             for i, item in enumerate(turn):
@@ -156,8 +172,17 @@ def search_get():
         text = request.form.get("text", default="", type=str)
         min_cost = request.args.get("min_cost", default=0, type=int)
         max_cost = request.args.get("max_cost", type=int)
+        category = request.args.get("category", type=int, default=-1)
         types_post = request.args.get("types", default='-1', type=str)
         return redirect(f'/search?text={text}&min_cost={min_cost}&max_cost={max_cost}&types={types_post}')
+
+
+@app.route("/categories", methods=['GET', 'POST'])
+def category_get():
+    db_sess = db_session.create_session()
+    category_id = request.args.get("category", default=0, type=int)
+    category = db_sess.query(Category).filter(Category.id == category_id).first()
+    return str([i.product_group.title for i in category.products])
 
 
 @app.route('/show_product/<int:product_group_id>/<int:product_id>', methods=['GET', 'POST'])
@@ -174,7 +199,8 @@ def comment_product(product_group_id, product_id):
     form = CommentsForm()
     if request.method == 'GET':
         db_sess = db_session.create_session()
-        comment = db_sess.query(Comments).filter(Comments.product_group_id == product_group_id,  Comments.user_id == current_user.id).first()
+        comment = db_sess.query(Comments).filter(Comments.product_group_id == product_group_id,
+                                                 Comments.user_id == current_user.id).first()
         if comment:
             form.plus.data = comment.plus
             form.minus.data = comment.minus
@@ -182,7 +208,8 @@ def comment_product(product_group_id, product_id):
             form.mark.data = comment.mark
     elif form.validate_on_submit():
         db_sess = db_session.create_session()
-        comment = db_sess.query(Comments).filter(Comments.product_group_id == product_group_id,  Comments.user_id == current_user.id).first()
+        comment = db_sess.query(Comments).filter(Comments.product_group_id == product_group_id,
+                                                 Comments.user_id == current_user.id).first()
         new = False
         if not comment:
             comment = Comments()
@@ -198,6 +225,7 @@ def comment_product(product_group_id, product_id):
         db_sess.commit()
         return redirect(f'/show_product/{product_group_id}/{product_id}')
     return render_template('pages/comment_form.html', title='Комментарий', form=form)
+
 
 @app.route('/admin/categories', methods=['GET', 'POST'])
 @login_required
@@ -405,7 +433,8 @@ def add_product(sender):
         form.product_group.data = int(sender)
     if form.validate_on_submit():
         if form.product_group.data == -1:
-            return render_template("pages/admin_add_product.html", data={'change': '0'}, form=form, title='добавление товара',
+            return render_template("pages/admin_add_product.html", data={'change': '0'}, form=form,
+                                   title='добавление товара',
                                    message='выберите группу товара')
         product = Products()
         product.product_group_id = form.product_group.data
