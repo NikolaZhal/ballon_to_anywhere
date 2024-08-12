@@ -12,14 +12,13 @@ class MultiCheckboxField(SelectMultipleField):
 class SearchForm(FlaskForm):
     min_cost = StringField('Цена От', validators=[], default='0')
     max_cost = StringField('Цена До', validators=[])
-    types = MultiCheckboxField('Типы товаров', coerce=int, choices=[(-1, 'Все')])
-    categories = RadioField("Категории", coerce=int, choices=[(-1, 'Все')],
-                      default=-1)
+    # types = MultiCheckboxField('Типы товаров', coerce=int, choices=[(-1, 'Все')])
+    categories = RadioField("Категории", coerce=int, choices=[(-1, 'Все')],                   default=-1)
     submit = SubmitField('Показать')
 
     def __init__(self, *args, types_data=[], categories_data=[], **kwargs):
         super().__init__(*args, **kwargs)
-        self.types.choices.extend(types_data)
+        # self.types.choices.extend(types_data)
         self.categories.choices.extend(categories_data)
 
 

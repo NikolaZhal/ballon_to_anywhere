@@ -49,15 +49,6 @@
                     {% endfor %}
                 </div>
                 {% endfor %}
-                <br>
-                <p class="fashion-text">{{form.types.label}}</p>
-                <div class="fashion-text">
-                    {% for subfield in form.types %}
-<!--                    //margin: 0 1vh 1vh 1vh;-->
-                    <div style="margin: 0 1vh 1vh 1vh;">{{ subfield() }}{{ subfield.label.text }}
-                    </div>
-                    {% endfor %}
-                </div>
                 <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
             </form>
         </div>

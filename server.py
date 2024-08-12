@@ -100,29 +100,29 @@ def index_post():
 @app.route("/search", methods=['GET', 'POST'])
 def search_get():
     db_sess = db_session.create_session()
-    types_db = db_sess.query(Types).all()
-    types_data = [(i.id, i.title) for i in types_db]
+    # types_db = db_sess.query(Types).all()
+    # types_data = [(i.id, i.title) for i in types_db]
     categories_db = db_sess.query(Category).all()
     categories_data = [(i.id, i.title) for i in categories_db]
-    form = SearchForm(types_data=types_data, categories_data=categories_data)
+    form = SearchForm(categories_data=categories_data)
     if form.validate_on_submit():
         text = request.form.get("text", default="", type=str)
         min_cost = form.min_cost.data
         max_cost = form.max_cost.data
         category = form.categories.data
-        types = ', '.join([str(i) for i in form.types.data]) or -1
+        # types = ', '.join([str(i) for i in form.types.data]) or -1
         return redirect(
-            f'/search?text={text}&min_cost={min_cost}&max_cost={max_cost}&types={types}&category={category}#1')
+            f'/search?text={text}&min_cost={min_cost}&max_cost={max_cost}&category={category}#1')
     elif request.method == 'GET':
         text = request.args.get("text", default="", type=str)
         min_cost = request.args.get("min_cost", default=0, type=int)
         max_cost = request.args.get("max_cost", type=int)
         category = request.args.get("category", type=int, default=-1)
-        types_post = [int(i) for i in request.args.get("types", default='-1', type=str).split(', ')]
-        # настройка формы
-        if -1 in types_post:
-            types_post = [i[0] for i in form.types.choices]
-        form.types.data = types_post
+        # types_post = [int(i) for i in request.args.get("types", default='-1', type=str).split(', ')]
+        # # настройка формы
+        # if -1 in types_post:
+        #     types_post = [i[0] for i in form.types.choices]
+        # form.types.data = types_post
         form.min_cost.data = min_cost
         form.max_cost.data = max_cost
         form.categories.data = category
@@ -135,23 +135,22 @@ def search_get():
             for word in text.split():
                 products.append(db_sess.query(Products).join(Products.product_group).filter(
                     (Products.product_group.property.mapper.class_.title.like(f'%{word}%')) | (
-                        Products.product_group.property.mapper.class_.description.like(f'%{word}%'))).filter(
-                    Products.product_group.property.mapper.class_.type.in_(types_post)))
+                        Products.product_group.property.mapper.class_.description.like(f'%{word}%')))
+                # .filter(Products.product_group.property.mapper.class_.type.in_(types_post))
+                                )
 
                 Category.id.in_(form.categories.data)
 
                 products_color.append(db_sess.query(Products).join(Products.product_group).filter(
-                    Products.product_group.property.mapper.class_.type.in_(types_post)).filter(
                     Products.color.like(f'%{word}%')))
             turn = products + products_color
         else:
-            turn = [db_sess.query(Products).join(Products.product_group).filter(
-                Products.product_group.property.mapper.class_.type.in_(types_post))]
+            turn = [db_sess.query(Products).join(Products.product_group)]
         #
         if category != -1:
             for i, item in enumerate(turn):
                 # .filter(ZKUser.groups.any(ZKGroup.id.in_([1, 2, 3])))
-                turn[i] = item.filter(Products.category.any(Category.id.in_([1, 2, 3])))
+                turn[i] = item.filter(Products.category.any(Category.id.in_([category])))
         if max_cost:
             # to_show = sorted(filter(lambda x: min_cost <= x.cost <= max_cost, set(turn)), key=lambda z: turn.index(z))
             for i, item in enumerate(turn):
@@ -173,8 +172,8 @@ def search_get():
         min_cost = request.args.get("min_cost", default=0, type=int)
         max_cost = request.args.get("max_cost", type=int)
         category = request.args.get("category", type=int, default=-1)
-        types_post = request.args.get("types", default='-1', type=str)
-        return redirect(f'/search?text={text}&min_cost={min_cost}&max_cost={max_cost}&types={types_post}')
+
+        return redirect(f'/search?text={text}&min_cost={min_cost}&max_cost={max_cost}')
 
 
 @app.route("/categories", methods=['GET', 'POST'])

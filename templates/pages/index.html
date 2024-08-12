@@ -26,12 +26,20 @@
         </div>
     </nav>
     <div class="index-category-menu">
+        <div class="category-img-place">
+            <a href="/search?category=-1">
+                <img class="d-block category-img" src="/static/img/system/catalog.png"
+                     alt="Каталог">
+            </a>
+            <p class="title-text">Каталог</p>
+        </div>
         {% for category in categories %}
         <div class="category-img-place">
             <a href="/search?category={{category.id}}">
                 <img class="d-block category-img" src="/static/img/categories/{{category.img}}"
-                     alt="{{category.img}}">
+                     alt="{{category.title}}">
             </a>
+            <p class="title-text">{{category.title}}</p>
         </div>
         {% endfor %}
     </div>

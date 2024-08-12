@@ -36,9 +36,24 @@
  margin: 2vh;
  }
 .category-img {
-  height: 40vh;
-  width: 40vh;
+  height: 38vh;
+  width: 38vh;
   border-radius: 5px;
   object-fit: cover;
 
+}
+
+.title-text{
+  text-shadow:
+    1px 1px 0 var(--framing),
+    1px -1px 0 var(--framing),
+    -1px 1px 0 var(--framing),
+    -1px -1px 0 var(--framing);
+
+  color: var(--text-color);
+  transition: all 1s;
+  text-align: center;
+
+      font-size: 2rem;
+    //font-family: cursive;
 }
