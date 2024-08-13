@@ -354,7 +354,7 @@ justify-content: center;
     //height: 100vh;
     margin: auto;
     display:grid;
-    grid-template-columns: 7vw 1fr;
+    grid-template-columns: 8vw 1fr;
     gap:10;
     grid-auto-flow: column;
 }
@@ -431,4 +431,16 @@ body {
 }
 .show-product-description{
 max-width: 30vw;
+}
+.tg-button {
+  display: block;
+  position: fixed;
+  bottom: 10vh;
+  right: 5vh;
+    width: 5vh;
+    height: 5vh;
+    border: none;
+    background-image: url(../img/system/tg_logo.png);
+    background-size: cover;
+    margin: 5px 5px;
 }

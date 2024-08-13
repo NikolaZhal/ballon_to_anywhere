@@ -18,8 +18,9 @@ class ProductGroup(SqlAlchemyBase, SerializerMixin):
     comments = orm.relationship("Comments", back_populates='product_group')
 
     def get_average_mark(self):
-        average = round(sum([comment.mark for comment in self.comments]) / len(self.comments), 2) if len(self.comments) else 'no comments later'
-        return average, len(self.comments)
+        average = round(sum([comment.mark for comment in self.comments]) / len(self.comments), 2) if len(
+            self.comments) else 'no comments later'
+        return f'{average}<span style="color: yellow;">★</span> {len(self.comments)} оценок'
 
     def __repr__(self):
         return f'<products_group> {self.id} {self.title}'

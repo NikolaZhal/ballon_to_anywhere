@@ -40,7 +40,7 @@
                 <div>
                     {{ form.csrf_token }}
                 </div>
-                {% for field in form if field.name not in ['csrf_token', 'submit', 'types', 'all_types'] %}
+                {% for field in form if field.name not in ['csrf_token', 'submit', 'all_types', 'categories'] %}
                 <div>
                     {{ field.label(class="fashion-text") }}
                     {{ field(class="form-control")}}
@@ -49,6 +49,14 @@
                     {% endfor %}
                 </div>
                 {% endfor %}
+                <p class="fashion-text">{{form.categories.label}}</p>
+                <div class="form-control">
+                    {% for subfield in form.categories %}
+                    <div>{{ subfield() }}{{ subfield.label.text }}
+                    </div>
+                    {% endfor %}
+                </div>
+                <br>
                 <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
             </form>
         </div>
