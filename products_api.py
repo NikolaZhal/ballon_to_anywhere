@@ -1,5 +1,5 @@
 import flask
-from flask import request, jsonify, make_response
+from flask import request, jsonify, abort, redirect
 from data import db_session
 from flask import session
 from data.products import Products
@@ -19,11 +19,9 @@ def add_product():
     data = request.json
     product_id = data['product_id']
     user_id = data['user_id']
+    href = data['href']
     if user_id == 0:
-        if product_id not in session['basket']:
-            session['basket'][product_id] = 0
-        session['basket'][product_id] += 1
-        print(session.get('basket'))
+        return redirect('/login')
     else:
         db_sess = db_session.create_session()
         user = db_sess.query(User).filter(User.id == user_id).first()
@@ -43,10 +41,7 @@ def minus_product():
     product_id = data['product_id']
     user_id = data['user_id']
     if user_id == 0:
-        if product_id not in session['basket']:
-            session['basket'][product_id] = 0
-        session['basket'][product_id] += 1
-        print(session.get('basket'))
+        return redirect('/login')
     else:
         db_sess = db_session.create_session()
         user = db_sess.query(User).filter(User.id == user_id).first()
@@ -66,7 +61,7 @@ def remove_product():
     product_id = data['product_id']
     user_id = data['user_id']
     if user_id == 0:
-        ...
+        return redirect('/login')
     else:
         db_sess = db_session.create_session()
         user = db_sess.query(User).filter(User.id == user_id).first()

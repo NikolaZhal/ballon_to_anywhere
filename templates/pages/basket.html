@@ -4,7 +4,7 @@
 
 <nav class="navbar navbar-light bg-light title-width">
     <h1>Ваша корзинка</h1>
-    <a href="#" onclick="window.history.back()" class="btn btn-success"> Назад </a>
+    <a href="{{hrefBack}}" class="btn btn-success"> Назад </a>
 </nav>
 <div>
     {%if basket%}
@@ -31,25 +31,25 @@
                     <h3 class="menu-item-title">{{ basket[item.label.text][1].title }}</h3>
                     <p class="menu-item-price">{{ basket[item.label.text][1].cost }}</p>
                     <h3>{{ basket[item.label.text][1].description }}</h3>
-                    <a href="./basket">
+<!--                    <a href="./basket">-->
                             <button class="btn btn-success add-to-cart-plus"
                                     onclick="addToBasket('{{ basket[item.label.text][1].id }}'{% if current_user.is_authenticated %}, '{{current_user.id}}' {%endif%});">
                                 +1
                             </button>
-                    </a>
+<!--                    </a>-->
                     <p class="number-cart-product">{{basket[item.label.text][0]}}</p>
-                    <a href="./basket">
+<!--                    <a href="./basket">-->
                         <button class="btn btn-danger remove-from-cart-minus"
                                 onclick="minusFromBasket('{{ basket[item.label.text][1].id }}'{% if current_user.is_authenticated %}, '{{current_user.id}}' {%endif%});">
                             -1
                         </button>
-                    </a>
-                    <a href="./basket">
+<!--                    </a>-->
+<!--                    <a href="./basket">-->
                         <button type="submit" class="delete-cart-button"
                                 onclick="removeFromBasket('{{ basket[item.label.text][1].id }}'{% if current_user.is_authenticated %}, '{{current_user.id}}' {%endif%});">
 
                         </button>
-                    </a>
+<!--                    </a>-->
                 </div>
             </div>
             {% endfor %}

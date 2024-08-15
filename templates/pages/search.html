@@ -9,7 +9,7 @@
                 <form method="POST">
                     <div class="search-all">
                         <div align="right" class="search-string">
-                            <input type="text" id="text" name="text" class="form-control"/>
+                            <input type="text" id="text" name="text" class="form-control" value="{{text}}"/>
                         </div>
                         <div class="search-button">
                             <input type="submit" value="Поиск" class="btn btn-primary"/>
@@ -19,9 +19,13 @@
 
             </div>
             <div align="right">
-                <a href="/basket">
-                    <div class="basket-button"></div>
-                </a>
+<!--                <a href="/basket">-->
+<!--                    <div class="basket-button"></div>-->
+<!--                </a>-->
+                <button class="basket-button"
+                        onclick="saveHrefBasket({% if current_user.is_authenticated %}'{{current_user.id}}' {%endif%});">
+                    <!--                    <div class="basket-button"></div>-->
+                </button>
             </div>
         </div>
     </nav>

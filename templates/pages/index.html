@@ -18,11 +18,17 @@
                 </form>
 
             </div>
+
             <div align="right">
-                <a href="/basket">
-                    <div class="basket-button"></div>
-                </a>
+<!--                <a href="/basket">-->
+<!--                    <div class="basket-button"></div>-->
+<!--                </a>-->
+                <button class="basket-button"
+                        onclick="saveHrefBasket({% if current_user.is_authenticated %}'{{current_user.id}}' {%endif%});">
+<!--                    <div class="basket-button"></div>-->
+                </button>
             </div>
+
         </div>
     </nav>
     <div class="index-category-menu">

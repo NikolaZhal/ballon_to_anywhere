@@ -1,4 +1,5 @@
 import ast
+import json
 import os
 from datetime import datetime
 from os import listdir
@@ -6,7 +7,7 @@ from os.path import isfile, join
 from random import randint
 
 from flask import Flask
-from flask import render_template, redirect, request, abort
+from flask import render_template, redirect, request, abort, jsonify
 from flask import session
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 # from waitress import serve
@@ -136,10 +137,10 @@ def search_get():
                 products.append(db_sess.query(Products).join(Products.product_group).filter(
                     (Products.product_group.property.mapper.class_.title.like(f'%{word}%')) | (
                         Products.product_group.property.mapper.class_.description.like(f'%{word}%')))
-                # .filter(Products.product_group.property.mapper.class_.type.in_(types_post))
-                                )
+                    # .filter(Products.product_group.property.mapper.class_.type.in_(types_post))
+                )
 
-                Category.id.in_(form.categories.data)
+                # Category.id.in_(form.categories.data)
 
                 products_color.append(db_sess.query(Products).join(Products.product_group).filter(
                     Products.color.like(f'%{word}%')))
@@ -150,7 +151,7 @@ def search_get():
         if category != -1:
             for i, item in enumerate(turn):
                 # .filter(ZKUser.groups.any(ZKGroup.id.in_([1, 2, 3])))
-                turn[i] = item.filter(Products.category.any(Category.id.in_([category])))
+                turn[i] = item.filter(Products.category.any(Category.id.in_([category, ])))
         if max_cost:
             # to_show = sorted(filter(lambda x: min_cost <= x.cost <= max_cost, set(turn)), key=lambda z: turn.index(z))
             for i, item in enumerate(turn):
@@ -173,7 +174,7 @@ def search_get():
         max_cost = request.args.get("max_cost", type=int)
         category = request.args.get("category", type=int, default=-1)
 
-        return redirect(f'/search?text={text}&min_cost={min_cost}&max_cost={max_cost}')
+        return redirect(f'/search?text={text}&min_cost={min_cost}&max_cost={max_cost}&category={category}#1')
 
 
 @app.route("/categories", methods=['GET', 'POST'])
@@ -340,6 +341,7 @@ def admin_productsgroup():
 
 
 @app.route('/admin/add-productgroup', methods=['GET', 'POST'])
+@login_required
 def add_productgroup():
     data = []
 
@@ -402,6 +404,7 @@ def edit_product_group(id):
 
 
 @app.route('/admin/products-productgroup/<int:group_id>')
+@login_required
 def products_in_group(group_id):
     db_sess = db_session.create_session()
     productgroup = db_sess.query(ProductGroup).filter(ProductGroup.id == group_id).first()
@@ -417,6 +420,7 @@ def products_in_group(group_id):
 
 @app.route('/admin/add-product/', defaults={'sender': -1}, methods=['GET', 'POST'])
 @app.route('/admin/add-product/<int:sender>', methods=['GET', 'POST'])
+@login_required
 def add_product(sender):
     db_sess = db_session.create_session()
     product_groups = db_sess.query(ProductGroup).all()
@@ -546,6 +550,7 @@ def edit_product(product_id, sender):
 
 
 @app.route('/remove_item/<string:type>/<int:id>/<string:sender>', methods=['GET', 'POST'])
+@login_required
 def remove_item(type, id, sender):
     if current_user.admin:
         if type == 'products':
@@ -651,9 +656,27 @@ def make_order_text(order):
     return order.id, answer, answer.replace('<br>', '\n')
 
 
+def validate(value):
+    return value
+
+
 @app.route('/basket', methods=['GET', 'POST'])
 @login_required
 def user_basket():
+    if request.method == 'POST':
+        try:
+            data = request.json
+            if 'href' in data:
+                session['href'] = data.get('href')
+                return jsonify({'message': 'Success!', 'value': data.get('href')}), 200
+            else:
+                raise KeyError('Value key not found')
+        except (KeyError, json.JSONDecodeError) as e:
+            return jsonify({'error': 'Invalid data format'}), 400
+        except Exception as e:
+            ...
+    href = session.get('href') or '/index'
+    print(href)
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.id == current_user.id).first()
     basket = ast.literal_eval(user.basket)
@@ -676,9 +699,9 @@ def user_basket():
             return redirect('/make_order')
         else:
             return render_template('pages/basket.html', title='Корзина', user=user, basket=basket, form=form,
-                                   message='Не выбрано ни одного товара')
+                                   message='Не выбрано ни одного товара', hrefBack=href)
     form.content.data = [key for key in basket]
-    return render_template('pages/basket.html', title='Корзина', user=user, basket=basket, form=form)
+    return render_template('pages/basket.html', title='Корзина', user=user, basket=basket, form=form, hrefBack=href)
 
 
 @app.route('/logout')
@@ -690,6 +713,7 @@ def logout():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    print(session.get('loh'))
     form = LoginForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
