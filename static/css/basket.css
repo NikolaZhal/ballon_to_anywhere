@@ -1,0 +1,20 @@
+.basket-menu {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    padding: 5vh;
+    padding-top: 0;
+}
+.basket-main-sidebar{
+    width: 90vw;
+    //height: 100vh;
+    margin: auto;
+    display:grid;
+    grid-template-columns: 1fr 8vw;
+    gap:10;
+    grid-auto-flow: column;
+}
+
+
+

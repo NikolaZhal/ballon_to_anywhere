@@ -680,13 +680,11 @@ def user_basket():
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.id == current_user.id).first()
     basket = ast.literal_eval(user.basket)
+    print(basket)
     content = basket.copy()
 
     for key in basket:
-        db_sess = db_session.create_session()
         product = db_sess.query(Products).filter(Products.id == int(key)).first()
-        if product.img:
-            product.img = product.img.split(', ')
         basket[key] = [basket[key], product]
     data = []
     for key in basket:

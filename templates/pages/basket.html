@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='css/basket.css') }}">
 {% extends "base.html" %}
 
 {% block content %}
@@ -6,69 +7,37 @@
     <h1>Ваша корзинка</h1>
     <a href="{{hrefBack}}" class="btn btn-success"> Назад </a>
 </nav>
-<div>
-    {%if basket%}
+{%if basket%}
+<form action="" method="post" class="form-width">
+    <div class="basket-main-sidebar">
 
 
-    <form action="" method="post" class="form-width">
-        <p>{{ form.submit(type="submit", class="btn btn-primary", align="right") }}</p>
-        {{ form.hidden_tag() }}
+        <div>
 
-        <div class="menu">
 
-            {% for item in form.content %}
-            <div style="margin: 0 1vh 1vh 1vh;">{{ item() }}
-                <!--                <div>{{item.label}}</div>-->
-                <div class="menu-item">
-                    {% if basket[item.label.text][1].img%}
-                    <img class="menu-item-image" src="../static/img/products/{{basket[item.label.text][1].img[0]}}"
-                         alt="404 картинка не нашлась("/>
-                    {%else%}
-                    <img class="menu-item-image" src="../static/img/products/none.jpg"
-                         alt="404 картинка не нашлась("/>
-                    {%endif%}
-                    <div class="text-shadow"></div>
-                    <h3 class="menu-item-title">{{ basket[item.label.text][1].title }}</h3>
-                    <p class="menu-item-price">{{ basket[item.label.text][1].cost }}</p>
-                    <h3>{{ basket[item.label.text][1].description }}</h3>
-<!--                    <a href="./basket">-->
-                            <button class="btn btn-success add-to-cart-plus"
-                                    onclick="addToBasket('{{ basket[item.label.text][1].id }}'{% if current_user.is_authenticated %}, '{{current_user.id}}' {%endif%});">
-                                +1
-                            </button>
-<!--                    </a>-->
-                    <p class="number-cart-product">{{basket[item.label.text][0]}}</p>
-<!--                    <a href="./basket">-->
-                        <button class="btn btn-danger remove-from-cart-minus"
-                                onclick="minusFromBasket('{{ basket[item.label.text][1].id }}'{% if current_user.is_authenticated %}, '{{current_user.id}}' {%endif%});">
-                            -1
-                        </button>
-<!--                    </a>-->
-<!--                    <a href="./basket">-->
-                        <button type="submit" class="delete-cart-button"
-                                onclick="removeFromBasket('{{ basket[item.label.text][1].id }}'{% if current_user.is_authenticated %}, '{{current_user.id}}' {%endif%});">
+            {{ form.hidden_tag() }}
+            <div class="basket-menu">
+                {% for item in form.content %}
+                {% set amount, product = basket[item.label.text] %}
+                {% include 'includes/basket_product.html' %}
 
-                        </button>
-<!--                    </a>-->
-                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
+
+
+            <!--    <div>-->
+            <!--        <form action="" method="post">-->
+            <!--            <button type="submit" class="btn btn-success">Заказать</button>-->
+            <!--        </form>-->
+            <!--    </div>-->
+
+
         </div>
-    </form>
+        <div><p>{{ form.submit(type="submit", class="btn btn-primary", align="right") }}</p></div>
 
-
-    <!--    <div>-->
-    <!--        <form action="" method="post">-->
-    <!--            <button type="submit" class="btn btn-success">Заказать</button>-->
-    <!--        </form>-->
-    <!--    </div>-->
-
-
-    {%else%}
-    <h1>Ваша корзина пуста(</h1>
-    {%endif%}
-
-
-</div>
-
+    </div>
+</form>
+{%else%}
+<h1>Ваша корзина пуста(</h1>
+{%endif%}
 {% endblock %}

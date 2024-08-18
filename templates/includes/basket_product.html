@@ -1,8 +1,6 @@
-{%if view == 'cube'%}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/product_cube_style.css') }}">
-{%else%}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/product_style.css') }}">
-{%endif%}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/basket_product.css') }}">
+
 <div class="product menu-item">
     <div class="product-img-place">
         {% if product.get_img()[0]%}
@@ -40,16 +38,34 @@
                     <span class="product-description-title">{{product.product_group.title}}</span><br>
                     <span class="product-description-description">{{product.product_group.description}}</span><br>
                     <span class="product-description-color">{{product.color}}</span><br>
-                    <span class="product-description-color" >{% autoescape false %}{{product.product_group.get_average_mark()}}{% endautoescape %}</span><br>
+                    <span class="product-description-color">{% autoescape false %}{{product.product_group.get_average_mark()}}{% endautoescape %}</span><br>
                     <span class="product-description-price">{% autoescape false %}{{product.get_beautiful_price()}}{% endautoescape %}</span>
                 </div>
             </a>
         </div>
     </div>
-    <div class="product-button-plus">
-        <button class="btn btn-success"
-                onclick="addToBasket('{{ product.id }}'{% if current_user.is_authenticated %}, '{{current_user.id}}' {%endif%});">
-            +🧺
-        </button>
+    <div class="product-right">
+        <div>
+            {{product.get_price() * amount}}
+        </div>
+        <div class="btn-group" role="group" aria-label="Basic example">
+            <button class="btn btn-danger"
+                    onclick="minusFromBasket('{{ product.id }}'{% if current_user.is_authenticated %}, '{{current_user.id}}' {%endif%});">
+                -
+            </button>
+            <p>{{amount}}</p>
+
+            <button class="btn btn-success"
+                    onclick="addToBasket('{{ product.id }}'{% if current_user.is_authenticated %}, '{{current_user.id}}' {%endif%});">
+                +
+            </button>
+        </div>
+        <div style="border-radius: 0.25em;">{{item(class="custom-checkbox", style="border-radius: 0.25em;")}}</div>
+        <div>
+            <button type="submit" class="delete-cart-button"
+                    onclick="removeFromBasket('{{ basket[item.label.text][1].id }}'{% if current_user.is_authenticated %}, '{{current_user.id}}' {%endif%});">
+
+            </button>
+        </div>
     </div>
 </div>

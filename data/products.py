@@ -25,10 +25,13 @@ class Products(SqlAlchemyBase, SerializerMixin):
     def get_img(self):
         return self.img.split(', ')
 
-    def get_price(self):
+    def get_beautiful_price(self):
         if self.sale == 0:
             return str(self.cost)
         return f'<del>{self.cost}</del> {self.cost - self.sale}'
+
+    def get_price(self):
+        return self.cost - self.sale
 
     def get_categories_id(self):
         return [i.id for i in self.category]
