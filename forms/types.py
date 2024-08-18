@@ -1,6 +1,10 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, FileField
+from wtforms import SelectField, StringField, SubmitField, MultipleFileField, widgets, SelectMultipleField, \
+    TextAreaField, IntegerField, RadioField, FileField, BooleanField
 from wtforms.validators import DataRequired
+class MultiCheckboxField(SelectMultipleField):
+    widget = widgets.ListWidget(prefix_label=False)
+    option_widget = widgets.CheckboxInput()
 
 
 class TypeForm(FlaskForm):
@@ -12,3 +16,15 @@ class CategoryForm(FlaskForm):
     title = StringField('Название категории', validators=[DataRequired()])
     img = FileField(validators=[DataRequired()])
     submit = SubmitField('Добавить')
+
+
+class BannerForm(FlaskForm):
+    title = StringField('Название баннера', validators=[DataRequired()])
+    img = FileField(validators=[DataRequired()])
+    active = BooleanField(validators=[DataRequired()])
+    products = MultiCheckboxField('Продукты', choices=[])
+    submit = SubmitField('Подтвердить')
+
+    def __init__(self, *args, products_data=[(-1, 'Нет изображений')], **kwargs):
+        super().__init__(*args, **kwargs)
+        self.products.choices = products_data

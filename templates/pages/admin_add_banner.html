@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Добавление баннера</h1>
+{% if message %}
+<div class="alert alert-danger" role="alert"> <h5>{{message}}</h5></div>
+{%endif%}
+
+<form action="" method="post" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+    <div>
+        {{ form.csrf_token }}
+    </div>
+    {% for field in form if field.name not in ['csrf_token'] %}
+    <div>
+        {{ field.label() }}
+        {{ field(class="form-control")}}
+        {% for error in field.errors %}
+        <div class="error">{{ error }}</div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+
+<!--    <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>-->
+</form>
+{% endblock %}
+

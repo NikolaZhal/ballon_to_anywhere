@@ -17,6 +17,7 @@ from werkzeug.utils import secure_filename
 import products_api
 from bot import send_info
 from data import db_session
+from data.banners import Banners
 from data.category import Category
 from data.comments import Comments
 from data.orders import Order
@@ -24,11 +25,10 @@ from data.products import Products
 from data.products_group import ProductGroup
 from data.types import Types
 from data.users import User
-from data.banners import Banners
 from email_sender import send_email
 from forms.orders import BasketForm, MakeOrder
 from forms.products import ProductForm, ProductGroupForm, SearchForm, CommentsForm
-from forms.types import TypeForm, CategoryForm
+from forms.types import TypeForm, CategoryForm, BannerForm
 from forms.user import RegisterForm, LoginForm, ConfirmationForm
 
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
@@ -348,6 +348,33 @@ def admin_productsgroup():
                                productgroups=productgroups)
     else:
         return render_template('pages/no_rights.html')
+
+
+@app.route('/admin/add-banner', methods=['GET', 'POST'])
+@login_required
+def add_banner():
+    db_sess = db_session.create_session()
+    products = db_sess.query(Products).all()
+    products_data = []
+    for product in products:
+        products_data.append((product.id, product.product_group.title+product.color))
+    form = BannerForm(products_data=products_data)
+    if form.validate_on_submit():
+        banner = Banners()
+        banner.title = form.title.data
+        banner.active = form.active.data
+        db_sess = db_session.create_session()
+        banner.products.extend(db_sess.query(Products).filter(Products.id.in_(form.products.data)))
+        db_sess.add(banner)
+        db_sess.commit()
+        file = form.img.data
+        data_filename = secure_filename(file.filename)
+        data_filename = f"{banner.id}_{0}_{datetime.now().date()}.{data_filename.split('.')[-1]}"
+        file.save(os.path.join('./static/img/banners', data_filename))
+        banner.img = data_filename
+        db_sess.commit()
+        return redirect('/admin/banners')
+    return render_template("pages/admin_add_banner.html", form=form)
 
 
 @app.route('/admin/add-productgroup', methods=['GET', 'POST'])
