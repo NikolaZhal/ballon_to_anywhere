@@ -63,7 +63,7 @@
         <div style="border-radius: 0.25em;">{{item(class="custom-checkbox", style="border-radius: 0.25em;")}}</div>
         <div>
             <button type="submit" class="delete-cart-button"
-                    onclick="removeFromBasket('{{ basket[item.label.text][1].id }}'{% if current_user.is_authenticated %}, '{{current_user.id}}' {%endif%});">
+                    onclick="removeFromBasket('{{ product.id }}'{% if current_user.is_authenticated %}, '{{current_user.id}}' {%endif%});">
 
             </button>
         </div>

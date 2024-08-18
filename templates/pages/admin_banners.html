@@ -11,30 +11,27 @@
     <table>
         <tr>
             <th>Фото</th>
-            <th>Название Группы</th>
-            <th>Цвет</th>
-            <th>Стоимость</th>
-            <th>Скидка</th>
-            <th>Удалить</th>
+            <th>Название</th>
+            <th>Активен</th>
+            <th>Товары</th>
             <th>Редактировать</th>
         </tr>
-        {% for product in products %}
+        {% for banner in banners %}
         <tr>
 
-            <input type="text" value="{{ product.title }}" name="productRemTitle" style="display: none">
+            <input type="text" value="{{ banner.title }}" name="productRemTitle" style="display: none">
             <td id="imgTd">
                 {% if product.img%}
-                <img src="../static/img/products/{{product.get_img()[0]}}" class="admin-img-delete"
+                <img src="../static/img/products/{{banner.img}}" class="admin-img-delete"
                      alt="404 картинка не нашлась(">
                 {%else%}
-                <img class="admin-img-delete" src="../static/img/products/none.jpg"
+                <img class="admin-img-delete" src="../static/img/banners/none.jpg"
                      alt="404 картинка не нашлась("/>
                 {%endif%}
             </td>
-            <td>{{ product.product_group.title }}</td>
-            <td>{{ product.color }}</td>
-            <td>{{ product.cost }}₽</td>
-            <td>{{ product.sale }}₽</td>
+            <td>{{ banner.title }}</td>
+            <td>{{ banner.active }}</td>
+            <td>{{ banner.products }}</td>
             <td>
                 <button type="submit" onclick="show_me({{product.id}}, 'products');" class="delete-button">
                     <!--                        <img-->

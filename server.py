@@ -24,6 +24,7 @@ from data.products import Products
 from data.products_group import ProductGroup
 from data.types import Types
 from data.users import User
+from data.banners import Banners
 from email_sender import send_email
 from forms.orders import BasketForm, MakeOrder
 from forms.products import ProductForm, ProductGroupForm, SearchForm, CommentsForm
@@ -263,6 +264,18 @@ def admin_categories():
                                categories=categories, form=form)
 
 
+@app.route('/admin/banners', methods=['GET', 'POST'])
+@login_required
+def admin_banners():
+    if current_user.admin:
+        db_sess = db_session.create_session()
+        banners = db_sess.query(Banners).all()
+        return render_template('pages/admin_banners.html', title='Админ панель',
+                               banners=banners)
+    else:
+        return render_template('pages/no_rights.html')
+
+
 @app.route('/admin/types', methods=['GET', 'POST'])
 @login_required
 def admin_types():
@@ -319,9 +332,6 @@ def admin_products():
     if current_user.admin:
         db_sess = db_session.create_session()
         products = db_sess.query(Products).all()
-        for product in products:
-            if product.img:
-                product.img = product.img.split(', ')
         return render_template('pages/admin_products.html', title='Админ панель',
                                products=products)
     else:
