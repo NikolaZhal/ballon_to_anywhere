@@ -349,9 +349,16 @@ def admin_productsgroup():
     else:
         return render_template('pages/no_rights.html')
 
-@app.route('/admin/edit-category/<int:id>', methods=['GET', 'POST'])
+@app.route('/admin/edit-category/<int:category_id>', methods=['GET', 'POST'])
 @login_required
-def edit_category(id):
+def edit_category(category_id):
+    mypath = "./static/img/categories"
+    onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+    all_imgs = list(
+        filter(lambda x: (x.endswith(".jpg") or x.endswith(".png")) and x.split('_')[0] == str(category_id), onlyfiles))
+    print(all_imgs)
+
+
     db_sess = db_session.create_session()
     products = db_sess.query(Products).all()
     products_data = []
@@ -359,7 +366,7 @@ def edit_category(id):
         products_data.append((product.id, product.product_group.title + ' ' + product.color))
 
     db_sess = db_session.create_session()
-    category = db_sess.query(Category).filter(Category.id == id).first()
+    category = db_sess.query(Category).filter(Category.id == category_id).first()
     if not category:
         return ("Такогой категории нет")
     form = CategoryForm()
@@ -370,14 +377,27 @@ def edit_category(id):
             abort(404)
     if form.validate_on_submit():
         db_sess = db_session.create_session()
-        category = db_sess.query(Category).filter(Category.id == id).first()
+        category = db_sess.query(Category).filter(Category.id == category_id).first()
         if category:
             category.title = form.title.data
+            db_sess.commit()
+
+            if form.img.data.filename != '':
+                if len(all_imgs):
+                    os.remove(os.path.join('./static/img/categories', all_imgs[0]))
+
+                file = form.img.data
+                data_filename = secure_filename(file.filename)
+                data_filename = f"{category_id}_{0}_{datetime.now().date()}.{data_filename.split('.')[-1]}"
+                file.save(os.path.join('./static/img/categories', data_filename))
+                category.img =data_filename
+                db_sess.commit()
+
             db_sess.commit()
             return redirect('/admin/categories')
         else:
             abort(404)
-    return render_template('pages/admin_add_banner.html',
+    return render_template('pages/admin_edit_category.html',
                            title='Редактирование Категории',
                            form=form
                            )
@@ -411,9 +431,16 @@ def add_banner():
     return render_template("pages/admin_add_banner.html", form=form)
 
 
-@app.route('/admin/edit-banner/<int:id>', methods=['GET', 'POST'])
+@app.route('/admin/edit-banner/<int:banner_id>', methods=['GET', 'POST'])
 @login_required
-def edit_banner(id):
+def edit_banner(banner_id):
+    mypath = "./static/img/banners"
+    onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+    all_imgs = list(
+        filter(lambda x: (x.endswith(".jpg") or x.endswith(".png")) and x.split('_')[0] == str(banner_id), onlyfiles))
+    print(all_imgs)
+
+
     db_sess = db_session.create_session()
     products = db_sess.query(Products).all()
     products_data = []
@@ -421,7 +448,7 @@ def edit_banner(id):
         products_data.append((product.id, product.product_group.title + ' ' + product.color))
 
     db_sess = db_session.create_session()
-    banner = db_sess.query(Banners).filter(Banners.id == id).first()
+    banner = db_sess.query(Banners).filter(Banners.id == banner_id).first()
     if not banner:
         return ("Такого баннера нет")
     form = BannerForm(products_data=products_data, products=products_data)
@@ -434,11 +461,24 @@ def edit_banner(id):
             abort(404)
     if form.validate_on_submit():
         db_sess = db_session.create_session()
-        banner = db_sess.query(Banners).filter(Banners.id == id).first()
+        banner = db_sess.query(Banners).filter(Banners.id == banner_id).first()
         if banner:
             banner.title = form.title.data
             banner.active = form.active.data
             banner.products = db_sess.query(Products).filter(Products.id.in_(form.products.data)).all()
+            if form.img.data.filename != '':
+                if len(all_imgs):
+                    os.remove(os.path.join('./static/img/banners', all_imgs[0]))
+
+                file = form.img.data
+                data_filename = secure_filename(file.filename)
+                data_filename = f"{banner_id}_{0}_{datetime.now().date()}.{data_filename.split('.')[-1]}"
+                file.save(os.path.join('./static/img/banners', data_filename))
+                banner.img = data_filename
+                db_sess.commit()
+
+
+            
             db_sess.commit()
             return redirect('/admin/banners')
         else:
