@@ -349,6 +349,40 @@ def admin_productsgroup():
     else:
         return render_template('pages/no_rights.html')
 
+@app.route('/admin/edit-category/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_category(id):
+    db_sess = db_session.create_session()
+    products = db_sess.query(Products).all()
+    products_data = []
+    for product in products:
+        products_data.append((product.id, product.product_group.title + ' ' + product.color))
+
+    db_sess = db_session.create_session()
+    category = db_sess.query(Category).filter(Category.id == id).first()
+    if not category:
+        return ("Такогой категории нет")
+    form = CategoryForm()
+    if request.method == "GET":
+        if category:
+            form.title.data = category.title
+        else:
+            abort(404)
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        category = db_sess.query(Category).filter(Category.id == id).first()
+        if category:
+            category.title = form.title.data
+            db_sess.commit()
+            return redirect('/admin/categories')
+        else:
+            abort(404)
+    return render_template('pages/admin_add_banner.html',
+                           title='Редактирование Категории',
+                           form=form
+                           )
+
+
 
 @app.route('/admin/add-banner', methods=['GET', 'POST'])
 @login_required
@@ -357,7 +391,7 @@ def add_banner():
     products = db_sess.query(Products).all()
     products_data = []
     for product in products:
-        products_data.append((product.id, product.product_group.title+product.color))
+        products_data.append((product.id, product.product_group.title + product.color))
     form = BannerForm(products_data=products_data)
     if form.validate_on_submit():
         banner = Banners()
@@ -375,6 +409,44 @@ def add_banner():
         db_sess.commit()
         return redirect('/admin/banners')
     return render_template("pages/admin_add_banner.html", form=form)
+
+
+@app.route('/admin/edit-banner/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_banner(id):
+    db_sess = db_session.create_session()
+    products = db_sess.query(Products).all()
+    products_data = []
+    for product in products:
+        products_data.append((product.id, product.product_group.title + ' ' + product.color))
+
+    db_sess = db_session.create_session()
+    banner = db_sess.query(Banners).filter(Banners.id == id).first()
+    if not banner:
+        return ("Такого баннера нет")
+    form = BannerForm(products_data=products_data, products=products_data)
+    if request.method == "GET":
+        if banner:
+            form.title.data = banner.title
+            form.active.data = banner.active
+            form.products.data = banner.get_products_id()
+        else:
+            abort(404)
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        banner = db_sess.query(Banners).filter(Banners.id == id).first()
+        if banner:
+            banner.title = form.title.data
+            banner.active = form.active.data
+            banner.products = db_sess.query(Products).filter(Products.id.in_(form.products.data)).all()
+            db_sess.commit()
+            return redirect('/admin/banners')
+        else:
+            abort(404)
+    return render_template('pages/admin_add_banner.html',
+                           title='Редактирование Продукта',
+                           form=form
+                           )
 
 
 @app.route('/admin/add-productgroup', methods=['GET', 'POST'])

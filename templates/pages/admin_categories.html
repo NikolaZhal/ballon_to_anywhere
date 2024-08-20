@@ -34,6 +34,7 @@
             <th>id</th>
             <th>Категория</th>
             <th>Фото</th>
+            <th>Редактировать</th>
         </tr>
         {% for category in categories %}
         <tr>
@@ -44,6 +45,10 @@
                 <img src="/static/img/categories/{{category.img}}" class="admin-img-delete"
                      alt="404 картинка не нашлась(">
                 {%endif%}
+            </td>
+
+            <td>
+                <a href="/admin/edit-category/{{category.id}}" class="btn btn-secondary">редактировать категорию</a>
             </td>
         </tr>
         {% endfor %}

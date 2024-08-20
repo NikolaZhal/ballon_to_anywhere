@@ -14,13 +14,13 @@ class TypeForm(FlaskForm):
 
 class CategoryForm(FlaskForm):
     title = StringField('Название категории', validators=[DataRequired()])
-    img = FileField(validators=[DataRequired()])
+    img = FileField()
     submit = SubmitField('Добавить')
 
 
 class BannerForm(FlaskForm):
     title = StringField('Название баннера', validators=[DataRequired()])
-    img = FileField(validators=[DataRequired()])
+    img = FileField()
     active = BooleanField(validators=[DataRequired()])
     products = MultiCheckboxField('Продукты', choices=[])
     submit = SubmitField('Подтвердить')

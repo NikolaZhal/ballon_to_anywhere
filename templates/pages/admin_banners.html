@@ -14,6 +14,7 @@
             <th>Название</th>
             <th>Активен</th>
             <th>Товары</th>
+            <th>Удалить</th>
             <th>Редактировать</th>
         </tr>
         {% for banner in banners %}
@@ -40,7 +41,8 @@
                 </button>
             </td>
             <td>
-                <a href="/admin/edit-banner/{{banner.id}}" class="btn btn-secondary">редактировать товар</a>
+                <a href="/admin/edit-banner/{{banner.id}}" class="btn btn-secondary">редактировать баннер
+                </a>
             </td>
         </tr>
         {% endfor %}
