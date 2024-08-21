@@ -21,7 +21,7 @@ class CategoryForm(FlaskForm):
 class BannerForm(FlaskForm):
     title = StringField('Название баннера', validators=[DataRequired()])
     img = FileField()
-    active = BooleanField(validators=[DataRequired()])
+    active = BooleanField("Активен")
     products = MultiCheckboxField('Продукты', choices=[])
     submit = SubmitField('Подтвердить')
 

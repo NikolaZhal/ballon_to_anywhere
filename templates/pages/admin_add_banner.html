@@ -14,7 +14,8 @@
     {% for field in form if field.name not in ['csrf_token'] %}
     <div>
         {{ field.label() }}
-        {{ field(class="form-control")}}
+<!--        class="form-control")-->
+        {{ field()}}
         {% for error in field.errors %}
         <div class="error">{{ error }}</div>
         {% endfor %}

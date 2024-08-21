@@ -77,12 +77,8 @@ def index_get():
     db_sess = db_session.create_session()
     types = db_sess.query(Types).all()
     categories = db_sess.query(Category).all()
-    # for type in types:
-    #     for product in type.products:
-    #         for product_color in product.products:
-    #             if product_color.img:
-    #                 product_color.img = product_color.img.split(', ')
-    return render_template('pages/index.html', types=types, categories=categories, view='nocube')
+    banners = db_sess.query(Banners).filter(Banners.active == True).all()
+    return render_template('pages/index.html', types=types, categories=categories, banners=banners, view='nocube')
 
 
 @app.route("/", methods=['POST'])

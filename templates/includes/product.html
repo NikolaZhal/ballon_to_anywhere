@@ -9,6 +9,7 @@
         <div id="carousel{{product.id}}" class="carousel slide" data-bs-ride="false">
             <div class="carousel-inner">
                 <div class="carousel-item active">
+
                     <img class="d-block product-img" src="/static/img/products/{{product.get_img()[0]}}"
                          alt="{{product.get_img()[0]}}">
                 </div>
@@ -40,7 +41,7 @@
                     <span class="product-description-title">{{product.product_group.title}}</span><br>
                     <span class="product-description-description">{{product.product_group.description}}</span><br>
                     <span class="product-description-color">{{product.color}}</span><br>
-                    <span class="product-description-color" >{% autoescape false %}{{product.product_group.get_average_mark()}}{% endautoescape %}</span><br>
+                    <span class="product-description-color">{% autoescape false %}{{product.product_group.get_average_mark()}}{% endautoescape %}</span><br>
                     <span class="product-description-price">{% autoescape false %}{{product.get_beautiful_price()}}{% endautoescape %}</span>
                 </div>
             </a>

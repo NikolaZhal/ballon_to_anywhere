@@ -1,6 +1,49 @@
 {% extends "base.html" %}
 
 {% block content %}
+{% if banners|length > 0 %}
+<div class="banner-carousel">
+
+    {% if banners|length > 1 %}
+    <div id="banners-carousel" class="carousel slide" data-bs-ride="false">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <a href="/banner/{{banners[0].id}}">
+                    <img class="d-block banner-img" src="/static/img/banners/{{banners[0].img}}"
+                         alt="{{banners[0].title}}">
+                </a>
+            </div>
+            {% for banner in banners[1:]%}
+            <div class="carousel-item">
+                <a href="/banner/{{banner.id}}">
+                    <img class="d-block banner-img" src="/static/img/banners/{{banner.img}}" alt="{{banner.title}}">
+                </a>
+
+            </div>
+            {% endfor %}
+        </div>
+
+
+        <a class="carousel-control-prev" href="#banners-carousel" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only"></span>
+        </a>
+        <a class="carousel-control-next" href="#banners-carousel" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only"></span>
+        </a>
+    </div>
+    {%else%}
+    <div class="banner-img-box">
+        <a href="/banner/{{banners[0].id}}">
+            <img class="banner-img" src="/static/img/banners/{{banners[0].img}}"
+                 alt="/static/img/banners"/>
+        </a>
+    </div>
+    {%endif%}
+</div>
+{%endif%}
+
 <div class="main-background">
     <nav class="navbar navbar-light bg-light">
         <div class="index-navbar">
@@ -20,12 +63,12 @@
             </div>
 
             <div align="right">
-<!--                <a href="/basket">-->
-<!--                    <div class="basket-button"></div>-->
-<!--                </a>-->
+                <!--                <a href="/basket">-->
+                <!--                    <div class="basket-button"></div>-->
+                <!--                </a>-->
                 <button class="basket-button"
                         onclick="saveHrefBasket({% if current_user.is_authenticated %}'{{current_user.id}}' {%endif%});">
-<!--                    <div class="basket-button"></div>-->
+                    <!--                    <div class="basket-button"></div>-->
                 </button>
             </div>
 
