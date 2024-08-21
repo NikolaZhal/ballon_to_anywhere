@@ -735,6 +735,22 @@ def remove_item(type, id, sender):
             db_sess.query(ProductGroup).filter(ProductGroup.id == id).delete()
             db_sess.commit()
             return redirect('/admin/productsgroups')
+        elif type == 'banners':
+            db_sess = db_session.create_session()
+            banner = db_sess.query(Banners).filter(Banners.id == id).first()
+            banner.products = []
+            db_sess.commit()
+            db_sess.query(Banners).filter(Banners.id == id).delete()
+            db_sess.commit()
+
+            mypath = "./static/img/banners"
+            onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+            banners_img = list(
+                filter(lambda x: (x.endswith(".jpg") or x.endswith(".png")) and x.split('_')[0] == str(id),
+                       onlyfiles))
+            for img_name in banners_img:
+                os.remove(f"{mypath}/{img_name}")
+            return redirect('/admin/banners')
     else:
         return render_template('pages/no_rights.html')
 
