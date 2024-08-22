@@ -11,8 +11,9 @@
             {% endif %}
             {% else %}
         <p align="right">
-            <a class="btn btn-primary " href="/register">Зарегистрироваться</a>
-            <a class="btn btn-success" href="/login">Войти</a>
+
+            <a class="btn btn-primary" onclick="saveHref('/register')" href="/register">Зарегистрироваться</a>
+            <a class="btn btn-success" onclick="saveHref('/login')" href="/login">Войти</a>
         </p>
         {% endif %}
     </nav>

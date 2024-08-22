@@ -71,6 +71,22 @@ def load_user(user_id):
     return db_sess.query(User).filter(User.id == user_id).first()
 
 
+@app.route('/href_safer', methods=['POST'])
+def href_safer():
+    if request.method == 'POST':
+        try:
+            data = request.json
+            if 'href' in data:
+                session['href'] = data.get('href')
+                print(session['href'])
+                return jsonify({'message': 'Success!', 'value': data.get('href')}), 200
+            else:
+                raise KeyError('Value key not found')
+        except (KeyError, json.JSONDecodeError) as e:
+            return jsonify({'error': 'Invalid data format'}), 400
+        except Exception as e:
+            return jsonify({'error': 'Invalid data format'}), 400
+
 @app.route("/", methods=['GET'])
 @app.route("/index", methods=['GET'])
 def index_get():
@@ -129,7 +145,6 @@ def search_get():
         products_color = []
         # if min_cost == 0 and max_cost == -1
         if text:
-            print(text.split())
             for word in text.split():
                 products.append(db_sess.query(Products).join(Products.product_group).filter(
                     (Products.product_group.property.mapper.class_.title.like(f'%{word}%')) | (
@@ -352,7 +367,6 @@ def edit_category(category_id):
     onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
     all_imgs = list(
         filter(lambda x: (x.endswith(".jpg") or x.endswith(".png")) and x.split('_')[0] == str(category_id), onlyfiles))
-    print(all_imgs)
 
 
     db_sess = db_session.create_session()
@@ -434,7 +448,6 @@ def edit_banner(banner_id):
     onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
     all_imgs = list(
         filter(lambda x: (x.endswith(".jpg") or x.endswith(".png")) and x.split('_')[0] == str(banner_id), onlyfiles))
-    print(all_imgs)
 
 
     db_sess = db_session.create_session()
@@ -787,7 +800,6 @@ def user_make_order():
 
         user = db_sess.query(User).filter(User.id == current_user.id).first()
         user.basket = ast.literal_eval(user.basket)
-        print(user.basket, content, sep='\n')
         for product_id in content:
             if str(product_id) in user.basket:
                 del user.basket[str(product_id)]
@@ -828,7 +840,7 @@ def user_basket():
         try:
             data = request.json
             if 'href' in data:
-                session['href'] = data.get('href')
+                session['basket_href'] = data.get('href')
                 return jsonify({'message': 'Success!', 'value': data.get('href')}), 200
             else:
                 raise KeyError('Value key not found')
@@ -836,12 +848,12 @@ def user_basket():
             return jsonify({'error': 'Invalid data format'}), 400
         except Exception as e:
             ...
-    href = session.get('href') or '/index'
-    print(href)
+    href = session.get('basket_href') or '/index'
+
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.id == current_user.id).first()
     basket = ast.literal_eval(user.basket)
-    print(basket)
+
     content = basket.copy()
 
     for key in basket:
@@ -872,14 +884,14 @@ def logout():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    print(session.get('loh'))
+    href_redirect = session.get('href') or '/'
     form = LoginForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         user = db_sess.query(User).filter(User.email == form.email.data).first()
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
-            return redirect("/")
+            return redirect(href_redirect)
         return render_template('pages/login.html',
                                message="Неправильный логин или пароль",
                                form=form)
