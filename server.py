@@ -87,6 +87,7 @@ def href_safer():
         except Exception as e:
             return jsonify({'error': 'Invalid data format'}), 400
 
+
 @app.route("/", methods=['GET'])
 @app.route("/index", methods=['GET'])
 def index_get():
@@ -109,6 +110,13 @@ def index_post():
                 if product_color.img:
                     product_color.img = product_color.img.split(', ')
     return redirect(f'/search?text={text}')
+
+
+@app.route("/banner/<int:banner_id>")
+def banner_get(banner_id):
+    db_sess = db_session.create_session()
+    banner = db_sess.query(Banners).filter(Banners.id == banner_id).first()
+    return render_template('pages/banners.html', banner=banner)
 
 
 @app.route("/search", methods=['GET', 'POST'])
@@ -360,6 +368,7 @@ def admin_productsgroup():
     else:
         return render_template('pages/no_rights.html')
 
+
 @app.route('/admin/edit-category/<int:category_id>', methods=['GET', 'POST'])
 @login_required
 def edit_category(category_id):
@@ -367,7 +376,6 @@ def edit_category(category_id):
     onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
     all_imgs = list(
         filter(lambda x: (x.endswith(".jpg") or x.endswith(".png")) and x.split('_')[0] == str(category_id), onlyfiles))
-
 
     db_sess = db_session.create_session()
     products = db_sess.query(Products).all()
@@ -400,7 +408,7 @@ def edit_category(category_id):
                 data_filename = secure_filename(file.filename)
                 data_filename = f"{category_id}_{0}_{datetime.now().date()}.{data_filename.split('.')[-1]}"
                 file.save(os.path.join('./static/img/categories', data_filename))
-                category.img =data_filename
+                category.img = data_filename
                 db_sess.commit()
 
             db_sess.commit()
@@ -411,7 +419,6 @@ def edit_category(category_id):
                            title='Редактирование Категории',
                            form=form
                            )
-
 
 
 @app.route('/admin/add-banner', methods=['GET', 'POST'])
@@ -449,7 +456,6 @@ def edit_banner(banner_id):
     all_imgs = list(
         filter(lambda x: (x.endswith(".jpg") or x.endswith(".png")) and x.split('_')[0] == str(banner_id), onlyfiles))
 
-
     db_sess = db_session.create_session()
     products = db_sess.query(Products).all()
     products_data = []
@@ -486,8 +492,6 @@ def edit_banner(banner_id):
                 banner.img = data_filename
                 db_sess.commit()
 
-
-            
             db_sess.commit()
             return redirect('/admin/banners')
         else:

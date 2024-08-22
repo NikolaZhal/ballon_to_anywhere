@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="main-background">
+    <nav class="navbar navbar-light bg-light">
+        <div class="index-navbar">
+            <!--    <div align="center" class="search">-->
+            <div align="right">
+                <form method="POST">
+                    <div class="search-all">
+                        <div align="right" class="search-string">
+                            <input type="text" id="text" name="text" class="form-control" value="{{text}}"/>
+                        </div>
+                        <div class="search-button">
+                            <input type="submit" value="Поиск" class="btn btn-primary"/>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+            <div align="right">
+<!--                <a href="/basket">-->
+<!--                    <div class="basket-button"></div>-->
+<!--                </a>-->
+                <button class="basket-button"
+                        onclick="saveHrefBasket({% if current_user.is_authenticated %}'{{current_user.id}}' {%endif%});">
+                    <!--                    <div class="basket-button"></div>-->
+                </button>
+            </div>
+        </div>
+    </nav>
+    <nav class="navbar navbar-light bg-light title-width">
+        <div align="right">
+            {% for type in show_parts %}
+            <a href="#{{type}}" class="btn btn-success">{{type}}</a>
+            {% endfor %}
+        </div>
+    </nav>
+    <div class="main-sidebar">
+        <div class="menu">
+            {% for product in banner.products %}
+            {% include 'includes/product.html' %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
