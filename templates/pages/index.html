@@ -1,7 +1,41 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% if banners|length > 0 %}
+
+
+<div class="main-background">
+    <!-- Строка поиска-->
+    <nav class="navbar navbar-light bg-light">
+        <div class="index-navbar">
+            <!--    <div align="center" class="search">-->
+            <div align="right">
+                <form method="POST">
+                    <div class="search-all">
+                        <div align="right" class="search-string">
+                            <input type="text" id="text" name="text" class="form-control"/>
+                        </div>
+                        <div class="search-button" align="left">
+                            <input type="submit" value="Поиск" class="btn btn-primary"/>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+
+            <div align="right">
+                <!--                <a href="/basket">-->
+                <!--                    <div class="basket-button"></div>-->
+                <!--                </a>-->
+                <button class="basket-button"
+                        onclick="saveHrefBasket({% if current_user.is_authenticated %}'{{current_user.id}}' {%endif%});">
+                    <!--                    <div class="basket-button"></div>-->
+                </button>
+            </div>
+
+        </div>
+    </nav>
+    <!--    Баннер   -->
+    {% if banners|length > 0 %}
 <div class="banner-carousel">
 
     {% if banners|length > 1 %}
@@ -44,36 +78,7 @@
 </div>
 {%endif%}
 
-<div class="main-background">
-    <nav class="navbar navbar-light bg-light">
-        <div class="index-navbar">
-            <!--    <div align="center" class="search">-->
-            <div align="right">
-                <form method="POST">
-                    <div class="search-all">
-                        <div align="right" class="search-string">
-                            <input type="text" id="text" name="text" class="form-control"/>
-                        </div>
-                        <div class="search-button" align="left">
-                            <input type="submit" value="Поиск" class="btn btn-primary"/>
-                        </div>
-                    </div>
-                </form>
-
-            </div>
-
-            <div align="right">
-                <!--                <a href="/basket">-->
-                <!--                    <div class="basket-button"></div>-->
-                <!--                </a>-->
-                <button class="basket-button"
-                        onclick="saveHrefBasket({% if current_user.is_authenticated %}'{{current_user.id}}' {%endif%});">
-                    <!--                    <div class="basket-button"></div>-->
-                </button>
-            </div>
-
-        </div>
-    </nav>
+    <!-- тело  -->
     <div class="index-category-menu">
         <div class="category-img-place">
             <a href="/search?category=-1">
