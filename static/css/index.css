@@ -58,8 +58,8 @@
     //font-family: cursive;
 }
 .banner-carousel{
-    width: 99vw !important;
-    height: 12vh;
+    width:100% !important;
+    height: 20vh;
 
 }
 .banner-img-box{
@@ -76,8 +76,8 @@
       //width: 500px;
       //height 12vh;
       */
-  width: 99vw !important;
-  height: 12vh;
+  width: 100% !important;
+ //height: 20vh;
   object-fit: cover;
 
 }
