@@ -12,10 +12,10 @@
                 <form method="POST">
                     <div class="search-all">
                         <div align="right" class="search-string">
-                            <input type="text" id="text" name="text" class="form-control"/>
+                            <input type="text" id="text" name="text" class="form-control" />
                         </div>
                         <div class="search-button" align="left">
-                            <input type="submit" value="Поиск" class="btn btn-primary"/>
+                            <input type="submit" value="Поиск" class="btn btn-primary" />
                         </div>
                     </div>
                 </form>
@@ -27,7 +27,7 @@
                 <!--                    <div class="basket-button"></div>-->
                 <!--                </a>-->
                 <button class="basket-button"
-                        onclick="saveHrefBasket({% if current_user.is_authenticated %}'{{current_user.id}}' {%endif%});">
+                    onclick="saveHrefBasket({% if current_user.is_authenticated %}'{{current_user.id}}' {%endif%});">
                     <!--                    <div class="basket-button"></div>-->
                 </button>
             </div>
@@ -36,64 +36,62 @@
     </nav>
     <!--    Баннер   -->
     {% if banners|length > 0 %}
-<div class="banner-carousel">
+    <div class="banner-carousel">
 
-    {% if banners|length > 1 %}
-    <div id="banners-carousel" class="carousel slide" data-bs-ride="false">
-        <div class="carousel-inner">
-            <div class="carousel-item active">
-                <a href="/banner/{{banners[0].id}}">
-                    <img class="d-block banner-img" src="/static/img/banners/{{banners[0].img}}"
-                         alt="{{banners[0].title}}">
-                </a>
-            </div>
-            {% for banner in banners[1:]%}
-            <div class="carousel-item">
-                <a href="/banner/{{banner.id}}">
-                    <img class="d-block banner-img" src="/static/img/banners/{{banner.img}}" alt="{{banner.title}}">
-                </a>
+        {% if banners|length > 1 %}
+        <div id="banners-carousel" class="carousel slide" data-bs-ride="false">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <a href="/banner/{{banners[0].id}}">
+                        <img class="d-block banner-img" src="/static/img/banners/{{banners[0].img}}"
+                            alt="{{banners[0].title}}">
+                    </a>
+                </div>
+                {% for banner in banners[1:]%}
+                <div class="carousel-item">
+                    <a href="/banner/{{banner.id}}">
+                        <img class="d-block banner-img" src="/static/img/banners/{{banner.img}}" alt="{{banner.title}}">
+                    </a>
 
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
+
+
+            <a class="carousel-control-prev" href="#banners-carousel" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only"></span>
+            </a>
+            <a class="carousel-control-next" href="#banners-carousel" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only"></span>
+            </a>
         </div>
-
-
-        <a class="carousel-control-prev" href="#banners-carousel" role="button" data-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="sr-only"></span>
-        </a>
-        <a class="carousel-control-next" href="#banners-carousel" role="button" data-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="sr-only"></span>
-        </a>
-    </div>
-    {%else%}
-    <div class="banner-img-box">
-        <a href="/banner/{{banners[0].id}}">
-            <img class="banner-img" src="/static/img/banners/{{banners[0].img}}"
-                 alt="/static/img/banners"/>
-        </a>
+        {%else%}
+        <div class="banner-img-box">
+            <a href="/banner/{{banners[0].id}}">
+                <img class="banner-img" src="/static/img/banners/{{banners[0].img}}" alt="/static/img/banners" />
+            </a>
+        </div>
+        {%endif%}
     </div>
     {%endif%}
-</div>
-{%endif%}
 
     <!-- тело  -->
     <div class="index-category-menu">
         <div class="category-img-place">
             <a href="/search?category=-1">
-                <img class="d-block category-img" src="/static/img/system/catalog.png"
-                     alt="Каталог">
+                <img class="d-block category-img" src="/static/img/system/catalog.png" alt="Каталог">
             </a>
-            <p class="title-text">Каталог</p>
+            <p class="category-title-text">Каталог</p>
         </div>
         {% for category in categories %}
         <div class="category-img-place">
             <a href="/search?category={{category.id}}">
                 <img class="d-block category-img" src="/static/img/categories/{{category.img}}"
-                     alt="{{category.title}}">
+                    alt="{{category.title}}">
             </a>
-            <p class="title-text">{{category.title}}</p>
+            <p class="category-title-text">{{category.title}}</p>
         </div>
         {% endfor %}
     </div>
