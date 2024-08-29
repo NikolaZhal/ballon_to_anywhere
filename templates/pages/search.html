@@ -23,6 +23,14 @@
                 <!--                <a href="/basket">-->
                 <!--                    <div class="basket-button"></div>-->
                 <!--                </a>-->
+                <a href="#sidenav-open" id="sidenav-button" class="hamburger" title="Open Menu" aria-label="Open Menu">
+                    <svg viewBox="0 0 50 40" role="presentation" focusable="false"
+                        aria-label="trigram for heaven symbol">
+                        <line x1="0" x2="100%" y1="10%" y2="10%" />
+                        <line x1="0" x2="100%" y1="50%" y2="50%" />
+                        <line x1="0" x2="100%" y1="90%" y2="90%" />
+                    </svg>
+                </a>
                 <button class="basket-button"
                     onclick="saveHrefBasket({% if current_user.is_authenticated %}'{{current_user.id}}' {%endif%});">
                     <!--                    <div class="basket-button"></div>-->
@@ -38,9 +46,11 @@
         </div>
     </nav>
     <div class="main-sidebar">
-        <div class="sidebar">
-            <label class="form-label fashion-text">Цена</label>
+        <div id="sidenav-open" class="sidebar">
+
+
             <form action="" method="post">
+                <label class="form-label fashion-text">Цена</label>
                 {{ form.hidden_tag() }}
                 <div>
                     {{ form.csrf_token }}
@@ -64,6 +74,9 @@
                 <br>
                 <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
             </form>
+            <a href="#" id="sidenav-close" title="Close Menu" aria-label="Close Menu"
+                onclick="window.history.back()">много текста</a>
+
         </div>
         <div class="menu">
             {% for parts in show_parts %}
