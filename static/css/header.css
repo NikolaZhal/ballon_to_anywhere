@@ -2,8 +2,15 @@
     --main-color: #0179FA;
     --second-color: white;
 }
-/*
-header {
+
+
+/* header {
     background-color: var(--main-color);
+} */
+@media (max-width: 360px) {
+
+    header .btn,
+    header .logout {
+        font-size: 0.7rem;
+    }
 }
-*/

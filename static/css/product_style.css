@@ -1,18 +1,20 @@
 a {
-color:#537CBC;
-text-decoration:none;
+  color: #537CBC;
+  text-decoration: none;
 }
+
 .product {
   border: 2px solid rgb(233 171 88);
-  //border-bottom: 2px solid rgb(233 171 88);
+  /* border-bottom: 2px solid rgb(233 171 88); */
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: 1fr;
   gap: 10px;
   grid-auto-rows: 1fr;
-   /*background-color: rgb(171 233 88 / 50%);*/
+  /*background-color: rgb(171 233 88 / 50%);*/
 }
-.product > div {
+
+.product>div {
   /*background-color: rgb(233 171 88 / 50%);*/
   padding: 1em;
   color: #d9480f;
@@ -20,10 +22,11 @@ text-decoration:none;
 
 .product-img-place {
   grid-column: 1 / 2;
-  //grid-row: 1 / 2;
+  /* grid-row: 1 / 2; */
   width: 28vh;
   height: 28vh;
- }
+}
+
 .product-img {
   height: 24vh;
   width: 24vh;
@@ -31,37 +34,43 @@ text-decoration:none;
   object-fit: cover;
 
 }
+
 .product-description {
   grid-column: 2 / 3;
 
-  //grid-row: 1 / 2;
+  /* grid-row: 1 / 2; */
   width: 45vw;
   height: 30vh;
 }
-.product-description-title{
-    font-size: 2rem;
-    //font-family: cursive;
-    color: rgb(50 200 50);
-    text-align: left;
+
+.product-description-title {
+  font-size: 2rem;
+  /* font-family: cursive; */
+  color: rgb(50 200 50);
+  text-align: left;
 }
-.product-description-description{
-    //font-family: cursive;
-    color: rgb(101 151 230);
-    text-align: left;
+
+.product-description-description {
+  /* font-family: cursive; */
+  color: rgb(101 151 230);
+  text-align: left;
 }
-.product-description-color{
-    //font-family: cursive;
-    color: rgb(10 10 10);
-    text-align: left;
+
+.product-description-color {
+  /* font-family: cursive; */
+  color: rgb(10 10 10);
+  text-align: left;
 }
-.product-description-price{
-    font-size: 1.2rem;
-    //font-family: cursive;
-    color: rgb(10 10 10);
-    text-align: left;
+
+.product-description-price {
+  font-size: 1.2rem;
+  /* font-family: cursive; */
+  color: rgb(10 10 10);
+  text-align: left;
 }
+
 span[class="product-description-price"]:after {
-content: '₽';
+  content: '₽';
 }
 
 /*
@@ -73,16 +82,18 @@ opacity: 0;
 }
 */
 
-.product-no-title{
-    color: rgb(1 1 1);
+.product-no-title {
+  color: rgb(1 1 1);
 }
+
 .product-buttons {
   grid-column: 3 / 4;
-  //grid-row: 1 / 2;
+  /* grid-row: 1 / 2; */
 }
+
 .product-button-plus {
   grid-column: 3 / 4;
- //grid-row: 1 / 2;
+  /* grid-row: 1 / 2; */
 }
 
 /*

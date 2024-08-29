@@ -6,15 +6,27 @@
     padding: 5vh;
     padding-top: 0;
 }
-.basket-main-sidebar{
+
+.basket-main-sidebar {
     width: 90vw;
-    //height: 100vh;
+    /* //height: 100vh; */
     margin: auto;
-    display:grid;
+    display: grid;
     grid-template-columns: 1fr 8vw;
-    gap:10;
+    gap: 10;
     grid-auto-flow: column;
 }
 
 
-
+.delete-cart-button {
+    width: 3vh;
+    height: 3vh;
+    border: none;
+    background-image: url("../img/system/admin_del_item.png");
+    background-size: cover;
+    background-color: transparent;
+    margin: 5px 5px;
+    position: absolute;
+    top: 60px;
+    right: 20px;
+}
