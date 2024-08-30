@@ -1,6 +1,15 @@
+html {
+  --hide-side-width: 1000px;
+}
+
 .sidebar {
   z-index: 250;
-  background-color: rgb(224, 224, 224);
+}
+
+@media (max-width: var(--hide-side-width)) {
+  .sidebar {
+    background-color: rgb(224, 224, 224);
+  }
 }
 
 .fashion-text {
@@ -16,7 +25,7 @@
 }
 
 .main-sidebar {
-  max-width: 90vw;
+  max-width: 98vw;
   /* height: 100vh;  */
   /* margin: auto; */
   display: grid;

@@ -24,7 +24,9 @@ html {
   --gray-50: #f6f8f9;
   --framing: black;
   --text-color: white;
+
 }
+
 
 main {
   flex: 1;
@@ -124,25 +126,6 @@ h4 {
   margin-left: 5vh;
   padding-top: 0;
   /* border: 5px solid rgb(0 0 0); */
-}
-
-.menu-item {
-  /* width: 30vh; */
-  /* height: 30vh; */
-  margin: 10px 5px;
-  /* text-align: center; */
-  background-color: var(--thirdly-color);
-  position: relative;
-  /* transition: 0.75s; */
-  border-radius: 20px;
-  flex-basis: content;
-}
-
-.menu-item-image {
-  /* width: 30vh; */
-  height: 30vh;
-  border-radius: 20px;
-  object-fit: contain;
 }
 
 

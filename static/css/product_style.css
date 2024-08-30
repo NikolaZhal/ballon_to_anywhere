@@ -1,26 +1,32 @@
+:root {
+  --product-text-color: rgb(255, 122, 0);
+  --product-description-color: rgb(195, 213, 243);
+  --product-title-color: rgb(255, 215, 0);
+  --product-background: rgb(19, 68, 124);
+}
+
+
 a {
-  color: #537CBC;
+  color: rgb(29, 72, 136);
   text-decoration: none;
 }
 
 .product {
-  border: 2px solid rgb(233 171 88);
+  border: 2px solid rgb(10, 59, 115);
   /* border-bottom: 2px solid rgb(233 171 88); */
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  grid-template-columns: 4fr 8fr 1fr;
   grid-template-rows: 1fr;
-  gap: 10px;
   grid-auto-rows: 1fr;
   /*background-color: rgb(171 233 88 / 50%);*/
 }
 
 .product>div {
-  /*background-color: rgb(233 171 88 / 50%);*/
-  padding: 1em;
-  color: #d9480f;
+  padding: 1em 1em 0 1em;
 }
 
 .product-img-place {
+  /* padding: 1em; */
   grid-column: 1 / 2;
   /* grid-row: 1 / 2; */
   width: 28vh;
@@ -37,50 +43,37 @@ a {
 
 .product-description {
   grid-column: 2 / 3;
-
-  /* grid-row: 1 / 2; */
-  width: 45vw;
-  height: 30vh;
 }
 
 .product-description-title {
   font-size: 2rem;
   /* font-family: cursive; */
-  color: rgb(50 200 50);
+  color: var(--product-title-color);
   text-align: left;
 }
 
 .product-description-description {
   /* font-family: cursive; */
-  color: rgb(101 151 230);
+  color: var(--product-description-color);
   text-align: left;
 }
 
 .product-description-color {
   /* font-family: cursive; */
-  color: rgb(10 10 10);
+  color: var(--product-text-color);
   text-align: left;
 }
 
 .product-description-price {
   font-size: 1.2rem;
   /* font-family: cursive; */
-  color: rgb(10 10 10);
+  color: var(--product-text-color);
   text-align: left;
 }
 
 span[class="product-description-price"]:after {
   content: '₽';
 }
-
-/*
-span[class="product-description-mark"]:after {
-color: yellow;
-content: '★';
-position: absolute;
-opacity: 0;
-}
-*/
 
 .product-no-title {
   color: rgb(1 1 1);
@@ -96,17 +89,12 @@ opacity: 0;
   /* grid-row: 1 / 2; */
 }
 
-/*
-.wrapper {
-  max-width: 940px;
-  margin: 0 auto;
+.menu-item {
+  margin: 10px 5px;
+  /* text-align: center; */
+  background-color: var(--product-background);
+  position: relative;
+  /* transition: 0.75s; */
+  border-radius: 20px;
+  flex-basis: content;
 }
-
-.wrapper > div {
-  border: 2px solid rgb(233 171 88);
-  border-radius: 5px;
-  background-color: rgb(233 171 88 / 50%);
-  padding: 1em;
-  color: #d9480f;
-}
-*/

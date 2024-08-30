@@ -1,8 +1,8 @@
-{%if view == 'cube'%}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/product_cube_style.css') }}">
-{%else%}
+<!--  {%if view == 'cube'%} -->
+<!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/product_cube_style.css') }}"> -->
+<!-- {%else%} -->
 <link rel="stylesheet" href="{{ url_for('static', filename='css/product_style.css') }}">
-{%endif%}
+<!-- {%endif%} -->
 <div class="product menu-item">
     <div class="product-img-place">
         {% if product.get_img()[0]%}
@@ -11,7 +11,7 @@
                 <div class="carousel-item active">
 
                     <img class="d-block product-img" src="/static/img/products/{{product.get_img()[0]}}"
-                         alt="{{product.get_img()[0]}}">
+                        alt="{{product.get_img()[0]}}">
                 </div>
                 {% for item in product.get_img()[1:]%}
                 <div class="carousel-item">
@@ -30,26 +30,28 @@
         </div>
         {%else%}
         <img class="product-img" src="/static/img/products/none.jpg"
-             alt="/static/img/products/{{product.get_img()[0]}}"/>
+            alt="/static/img/products/{{product.get_img()[0]}}" />
         {%endif%}
     </div>
     <div class="product-description">
         <div align="left">
             <a href="/show_product/{{product.product_group_id}}/{{product.id}}"
-               class="product-no-title text-decoration:none">
+                class="product-no-title text-decoration:none">
                 <div>
                     <span class="product-description-title">{{product.product_group.title}}</span><br>
                     <span class="product-description-description">{{product.product_group.description}}</span><br>
                     <span class="product-description-color">{{product.color}}</span><br>
-                    <span class="product-description-color">{% autoescape false %}{{product.product_group.get_average_mark()}}{% endautoescape %}</span><br>
-                    <span class="product-description-price">{% autoescape false %}{{product.get_beautiful_price()}}{% endautoescape %}</span>
+                    <span class="product-description-color">{% autoescape false
+                        %}{{product.product_group.get_average_mark()}}{% endautoescape %}</span><br>
+                    <span class="product-description-price">{% autoescape false %}{{product.get_beautiful_price()}}{%
+                        endautoescape %}</span>
                 </div>
             </a>
         </div>
     </div>
     <div class="product-button-plus">
-        <button class="btn btn-success"
-                onclick="addToBasket('{{ product.id }}'{% if current_user.is_authenticated %}, '{{current_user.id}}' {%endif%});">
+        <button class="btn btn-warning"
+            onclick="addToBasket('{{ product.id }}'{% if current_user.is_authenticated %}, '{{current_user.id}}' {%endif%});">
             +🧺
         </button>
     </div>
