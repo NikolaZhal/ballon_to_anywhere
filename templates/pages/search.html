@@ -46,38 +46,38 @@
         </div>
     </nav>
     <div class="main-sidebar">
-        <div id="sidenav-open" class="sidebar">
-
-
-            <form action="" method="post">
-                <label class="form-label fashion-text">Цена</label>
-                {{ form.hidden_tag() }}
-                <div>
-                    {{ form.csrf_token }}
-                </div>
-                {% for field in form if field.name not in ['csrf_token', 'submit', 'all_types', 'categories'] %}
-                <div>
-                    {{ field.label(class="fashion-text") }}
-                    {{ field(class="form-control")}}
-                    {% for error in field.errors %}
-                    <div class="error">{{ error }}</div>
-                    {% endfor %}
-                </div>
-                {% endfor %}
-                <p class="fashion-text">{{form.categories.label}}</p>
-                <div class="form-control">
-                    {% for subfield in form.categories %}
-                    <div>{{ subfield() }}{{ subfield.label.text }}
+        <aside id="sidenav-open" class="sidebar">
+            <div>
+                <a href="#" id="sidenav-close" title="Close Menu" aria-label="Close Menu"
+                    onclick="window.history.back()" class="fashion-text">много текста</a>
+                <form action="" method="post">
+                    <label class="form-label fashion-text">Цена</label>
+                    {{ form.hidden_tag() }}
+                    <div>
+                        {{ form.csrf_token }}
+                    </div>
+                    {% for field in form if field.name not in ['csrf_token', 'submit', 'all_types', 'categories'] %}
+                    <div>
+                        {{ field.label(class="fashion-text") }}
+                        {{ field(class="form-control")}}
+                        {% for error in field.errors %}
+                        <div class="error">{{ error }}</div>
+                        {% endfor %}
                     </div>
                     {% endfor %}
-                </div>
-                <br>
-                <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
-            </form>
-            <a href="#" id="sidenav-close" title="Close Menu" aria-label="Close Menu"
-                onclick="window.history.back()">много текста</a>
+                    <p class="fashion-text">{{form.categories.label}}</p>
+                    <div class="form-control">
+                        {% for subfield in form.categories %}
+                        <div>{{ subfield() }}{{ subfield.label.text }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <br>
+                    <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+                </form>
+            </div>
 
-        </div>
+        </aside>
         <div class="menu">
             {% for parts in show_parts %}
             <div id="{{parts}}"></div>
