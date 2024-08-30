@@ -1,12 +1,8 @@
-html {
-  --hide-side-width: 1000px;
-}
-
 .sidebar {
   z-index: 250;
 }
 
-@media (max-width: var(--hide-side-width)) {
+@media (max-width: 1000px) {
   .sidebar {
     background-color: rgb(224, 224, 224);
   }
@@ -25,10 +21,12 @@ html {
 }
 
 .main-sidebar {
-  max-width: 98vw;
+  max-width: 100%;
   /* height: 100vh;  */
-  /* margin: auto; */
+  padding: 0 0 0 2vw;
+  margin: auto;
   display: grid;
+  gap: 2vw;
   grid: [stack] 1fr/-webkit-min-content [stack] 1fr;
   grid: [stack] 1fr/min-content [stack] 1fr;
   /* grid-auto-flow: column; */
@@ -48,16 +46,21 @@ html {
   grid-template-columns: [nav] 2fr [escape] 1fr;
 }
 
-@media (max-width:540px) {
+@media (max-width:1000px) {
 
   div[class="main-sidebar"]>aside,
   div[class="main-sidebar"]>div[class="menu"] {
     grid-area: stack
   }
+
+  .main-sidebar {
+    padding: 0;
+    gap: 0;
+  }
 }
 
 
-@media (max-width:540px) {
+@media (max-width:1000px) {
   #sidenav-open {
     position: -webkit-sticky;
     position: sticky;
@@ -93,7 +96,7 @@ html {
   touch-action: manipulation
 }
 
-@media (min-width:540px) {
+@media (min-width:1000px) {
 
   #sidenav-button,
   #sidenav-close {

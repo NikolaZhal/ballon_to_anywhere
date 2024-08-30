@@ -24,12 +24,7 @@
                 <!--                    <div class="basket-button"></div>-->
                 <!--                </a>-->
                 <a href="#sidenav-open" id="sidenav-button" class="hamburger" title="Open Menu" aria-label="Open Menu">
-                    <svg viewBox="0 0 50 40" role="presentation" focusable="false"
-                        aria-label="trigram for heaven symbol">
-                        <line x1="0" x2="100%" y1="10%" y2="10%" />
-                        <line x1="0" x2="100%" y1="50%" y2="50%" />
-                        <line x1="0" x2="100%" y1="90%" y2="90%" />
-                    </svg>
+                    фильтры
                 </a>
                 <button class="basket-button"
                     onclick="saveHrefBasket({% if current_user.is_authenticated %}'{{current_user.id}}' {%endif%});">
