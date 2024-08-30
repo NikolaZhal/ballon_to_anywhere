@@ -46,6 +46,7 @@ a {
 
 .product-description {
   grid-column: 2 / 3;
+  justify-self: start;
 }
 
 .product-description-title {
