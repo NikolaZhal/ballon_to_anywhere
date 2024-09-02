@@ -145,10 +145,10 @@ a {
   }
 }
 
-@media (max-width: 379px) {
+@media (max-width: 386px) {
   .product-description-description {
-    font-size: 8px !important;
-    line-height: 12px !important;
+    font-size: 10px !important;
+    line-height: 14px !important;
 
   }
 
