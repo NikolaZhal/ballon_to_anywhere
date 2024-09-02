@@ -15,7 +15,7 @@ a {
   .product {
     display: grid;
     grid-template-columns: auto 1fr;
-    grid-template-rows: 120px 56px minmax(56px, auto) 52px;
+    grid-template-rows: 120px 56px minmax(56px, auto);
     padding: 12px;
   }
 }
@@ -65,7 +65,7 @@ a {
 
 
 @media (max-width: 767px) {
-  .catalog-products.view-simple .product-stats:after {
+  .product-stats:after {
     content: "";
     display: block;
     min-width: 12px;
@@ -73,7 +73,8 @@ a {
 }
 
 @media (max-width: 767px) {
-  .catalog-products.view-simple .product-stats {
+  .product-stats {
+    display: grid;
     grid-column: 1 / 3;
     grid-row: 2;
     margin: 0 -12px;
@@ -84,7 +85,7 @@ a {
 }
 
 @media (max-width: 767px) {
-  .catalog-products.view-simple .product-buy {
+  .product-buy {
     display: grid;
     grid-column: 1 / 3;
     grid-row: 3;
@@ -104,11 +105,29 @@ a {
   }
 }
 
-.product-buy__price-wrap_interactive {
+@media (max-width: 767px) {
+  .product-color {
+    display: grid;
+    grid-column: 1;
+    grid-row: 1;
+    padding-bottom: 12px;
+  }
+}
+
+@media (max-width: 767px) {
+  .product-mark {
+    display: grid;
+    grid-column: 2;
+    grid-row: 1;
+    padding-bottom: 12px;
+  }
+}
+
+/* .product-buy {
   cursor: pointer;
 }
 
-.product-buy__price-wrap {
+.product-buy {
   background: #f7f7f7;
   border-radius: 8px;
   display: flex;
@@ -120,10 +139,10 @@ a {
   position: relative;
 }
 
+*/
 
 
 .product {
-  border: 2px solid rgb(10, 59, 115);
   display: grid;
   width: 100%;
   margin: 5px 0px;
@@ -191,26 +210,26 @@ span[class="product-description-price"]:after {
   color: rgb(1 1 1);
 }
 
-.product-buttons {
+/* .product-buttons {
   grid-column: 3 / 4;
-  /* grid-row: 1 / 2; */
+  /* grid-row: 1 / 2; 
 }
 
 .product-button-plus {
   grid-column: 3 / 4;
-  /* justify-content: end; */
-  /* grid-row: 1 / 2; */
-}
+  /* justify-content: end; 
+  /* grid-row: 1 / 2; 
+} */
 
 @media (max-width: 770px) {
   .product-img-place {
-    grid-column: 1 / 2;
-    width: 14vh;
-    height: 14vh;
+    /* grid-column: 1 / 2; */
+    width: 16vh;
+    height: 16vh;
   }
 
   .product-img {
-    height: 12vh;
-    width: 12vh;
+    height: 14vh;
+    width: 14vh;
   }
 }

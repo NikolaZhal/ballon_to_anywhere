@@ -40,12 +40,16 @@
         </div>
     </div>
     <div class="product-stats">
-        <span class="product-description-color">{{product.color}}</span><br>
-        <span class="product-description-mark">{% autoescape false
-            %}{{product.product_group.get_average_mark()}}{% endautoescape %}</span><br>
+        <div class="product-color">
+            <span class="product-description-color">{{product.color}}</span><br>
+        </div>
+        <div class="product-mark">
+            <span class="product-description-mark">{% autoescape false
+                %}{{product.product_group.get_average_mark()}}{% endautoescape %}</span><br>
+        </div>
     </div>
     <div class="product-buy">
-        <div>
+        <div class="product-price">
             <span class="product-description-price">{% autoescape false %}{{product.get_beautiful_price()}}{%
                 endautoescape %}</span>
         </div>
