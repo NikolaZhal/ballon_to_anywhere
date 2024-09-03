@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='css/show_product.css') }}">
+
 {% extends "base.html" %}
 
 {% block content %}
@@ -14,7 +16,7 @@
             <div class="carousel-inner">
                 <div class="carousel-item active">
                     <img class="d-block show-product-img" src="/static/img/products/{{product.get_img()[0]}}"
-                         alt="{{product.get_img()[0]}}">
+                        alt="{{product.get_img()[0]}}">
                 </div>
                 {% for item in product.get_img()[1:]%}
                 <div class="carousel-item">
@@ -33,14 +35,16 @@
         </div>
         {%else%}
         <img class="show-product-img" src="/static/img/products/none.jpg"
-             alt="/static/img/products/{{product.get_img()[0]}}"/>
+            alt="/static/img/products/{{product.get_img()[0]}}" />
         {%endif%}
     </div>
     <div class="show-product-text-place">
         <div class="show-product-sub">
-            <div><h4>{{product.cost}}</h4></div>
+            <div>
+                <h4>{{product.cost}}</h4>
+            </div>
             <button class="btn btn-success"
-                    onclick="addToBasket('{{ product.id }}'{% if current_user.is_authenticated %}, '{{current_user.id}}' {%endif%});">
+                onclick="addToBasket('{{ product.id }}'{% if current_user.is_authenticated %}, '{{current_user.id}}' {%endif%});">
                 +🧺
             </button>
             <a href="/comment_product/{{product_group.id}}/{{ product.id }}" class="btn btn-primary">Оставить
@@ -49,14 +53,15 @@
         <div class="show-product-colors">
             {%for product_color in product_group.products%}
             <a href="/show_product/{{product_group.id}}/{{product_color.id}}">
-                <img class="d-block show-product-little-img"
-                     src="/static/img/products/{{product_color.get_img()[0]}}"
-                     alt="{{product.color}}">
+                <img class="d-block show-product-little-img" src="/static/img/products/{{product_color.get_img()[0]}}"
+                    alt="{{product.color}}">
             </a>
             {%endfor%}
         </div>
         <div class="show-product-description">
-            <div><p>{{product_group.description}}</p></div>
+            <div>
+                <p>{{product_group.description}}</p>
+            </div>
             <div>
                 {%for comment in product_group.comments%}
                 <div>{{comment.show_data()}}</div>
