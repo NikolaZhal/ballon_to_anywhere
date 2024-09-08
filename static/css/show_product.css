@@ -1,10 +1,3 @@
-.show-product-title {
-    grid-column: 1 / -1;
-    grid-row: 1;
-    margin-right: auto;
-    margin-left: auto;
-}
-
 .show-product-img-place {
 
     background-color: var(--thirdly-color);
@@ -31,7 +24,7 @@
 .show-product-sub {
     display: grid;
     grid-template-columns: auto auto;
-    gap: 10;
+    gap: 20px;
     grid-auto-flow: column;
     grid-area: info;
     width: 50% !important;
@@ -83,12 +76,9 @@
             "left stat"
             "left info"
             "left buy"
-            "left wrap"
-            "left free"
-            "gallery gallery"
-            "risks risks";
+            "left wrap";
         grid-template-columns: 1fr minmax(590px, 1fr);
-        grid-template-rows: repeat(6, auto) 1fr 120px auto;
+        grid-template-rows: repeat(6, auto);
         margin-bottom: 20px;
         width: 100% !important;
         max-width: 100%;
@@ -111,7 +101,7 @@
 
 @media (min-width: 992px) {
     .show-product-title {
-        margin-bottom: var(--container-padding);
+        /* margin-bottom: var(--container-padding); */
         margin-left: calc(var(--container-padding)* -1);
         padding-right: 65px;
     }
@@ -121,7 +111,7 @@
     .show-product-title {
         font-size: 32px;
         font-weight: 700;
-        margin-top: 0;
+        margin-top: auto;
         padding: 10px 0 var(--header-mb);
         word-break: break-word;
     }
@@ -145,7 +135,7 @@
 
 @media (min-width: 992px) {
     .show-product-description {
-        height: 84px;
+        /* height: 84px; */
         overflow: hidden;
     }
 }
