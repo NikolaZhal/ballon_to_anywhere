@@ -115,6 +115,16 @@ footer {
   margin: 5px 5px;
 }
 
+/* .add-to-basket-button {
+  width: 5vh;
+  height: 5vh;
+  border: none;
+  background-image: url("../img/system/add_to_basket.png");
+  background-size: cover;
+  background-color: #33ffa0;
+  margin: 5px 5px;
+} */
+
 .menu {
   display: grid;
   /* justify-content: space-around; */

@@ -30,7 +30,8 @@
     </div>
     <div class="product-description">
         <a href="/show_product/{{product.product_group_id}}/{{product.id}}"
-            class="product-no-title text-decoration:none">
+            class="product-no-title text-decoration:none"
+            onclick="saveHref('/show_product/{{product.product_group_id}}/{{product.id}}', {% if current_user.is_authenticated %}'{{current_user.id}}' {%endif%})">
             <div>
                 <span class="product-description-title">{{product.product_group.title}}</span><br>
                 <span class="product-description-description">{{product.product_group.description}}</span><br>
@@ -52,9 +53,9 @@
     </div>
     <div class="product-buy">
         <div class="product-button-plus">
-            <button class="btn btn-warning"
+            <button class="btn btn-success"
                 onclick="addToBasket('{{ product.id }}'{% if current_user.is_authenticated %}, '{{current_user.id}}' {%endif%});">
-                +🧺
+                Купить
             </button>
         </div>
     </div>

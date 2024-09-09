@@ -103,3 +103,34 @@
     display: none
   }
 }
+
+/* .hamburger:before {
+  content: "";
+  background-image: url("../img/system/gamburger.png");
+  background-size: 100% 100%;
+  display: inline-block;
+
+  height: 21px;
+  width: 21px;
+  position: relative;
+  top: 5px;
+
+} */
+
+
+.back-arrow:before {
+  /* width: 16px;
+  height: 16px; */
+  /* border: none; */
+  content: "";
+  background-image: url("../img/system/back.png");
+  background-size: 100% 100%;
+  display: inline-block;
+
+  /*size of your image*/
+  height: 25px;
+  width: 25px;
+  /* background-size: cover;
+  background-color: blueviolet; */
+  /* margin: 5px 5px; */
+}

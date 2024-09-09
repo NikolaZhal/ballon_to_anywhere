@@ -6,7 +6,7 @@
     <nav class="navbar navbar-light bg-light">
         <div class="index-navbar">
             <!--    <div align="center" class="search">-->
-            <div align="right">
+            <div class="search-navbar">
                 <form method="POST">
                     <div class="search-all">
                         <div align="right" class="search-string">
@@ -19,11 +19,9 @@
                 </form>
 
             </div>
-            <div align="right">
-                <!--                <a href="/basket">-->
-                <!--                    <div class="basket-button"></div>-->
-                <!--                </a>-->
-                <a href="#sidenav-open" id="sidenav-button" class="hamburger" title="Open Menu" aria-label="Open Menu">
+            <div class="button-navbar">
+                <a href="#sidenav-open" id="sidenav-button" class="btn btn-filter" title="Open Menu"
+                    aria-label="Open Menu">
                     фильтры
                 </a>
                 <button class="basket-button"
@@ -43,10 +41,12 @@
     <div class="main-sidebar">
         <aside id="sidenav-open" class="sidebar">
             <div>
-                <a href="#" id="sidenav-close" title="Close Menu" aria-label="Close Menu"
-                    onclick="window.history.back()" class="fashion-text">много текста</a>
+                <div class="search-sidenav-close">
+                    <a href="#" id="sidenav-close" title="Close Menu" aria-label="Close Menu"
+                        onclick="window.history.back()" class="fashion-text back-arrow">В каталог</a>
+                </div>
                 <form action="" method="post">
-                    <label class="form-label fashion-text">Цена</label>
+                    <!-- <label class="form-label fashion-text">Цена</label> -->
                     {{ form.hidden_tag() }}
                     <div>
                         {{ form.csrf_token }}

@@ -210,8 +210,9 @@ def show_product(product_group_id, product_id):
     db_sess = db_session.create_session()
     product_group = db_sess.query(ProductGroup).filter(ProductGroup.id == product_group_id).first()
     product = db_sess.query(Products).filter(Products.id == product_id).first()
+    href = session.get('href') or '/search'
     # db_sess.
-    return render_template('pages/show_product.html', title='product', product=product, product_group=product_group)
+    return render_template('pages/show_product.html', title='product', product=product, product_group=product_group, href=href)
 
 
 @app.route('/comment_product/<int:product_group_id>/<int:product_id>', methods=['GET', 'POST'])

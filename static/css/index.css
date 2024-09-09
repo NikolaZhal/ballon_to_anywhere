@@ -9,9 +9,10 @@
 .search-all {
   /* background: #00ff00; */
   display: grid;
-  grid-template-columns: 3fr 9fr 1fr;
+  grid-template-columns: 1fr 9fr 1fr;
   grid-template-areas: "space string button";
   justify-content: center;
+  /* gap: 10px; */
 }
 
 .search-string {
@@ -26,11 +27,52 @@
 
 .index-navbar {
   display: grid;
-  grid-template-columns: 4fr 1fr;
-  /* background: #ff0000; */
+  grid-template-columns: auto auto;
   width: 100%;
   justify-content: center;
+  align-content: center;
+  gap: 10px;
 }
+
+.navbar {
+  padding-top: 0;
+}
+
+.button-navbar {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    "btn-filter right"
+    "left right";
+  /* background: #ff0000; */
+  width: 50%;
+  justify-self: end;
+}
+
+@media (max-width: 500px) {
+  .index-navbar {
+    grid-template-columns: auto;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+      "right"
+      "btn-filter";
+
+  }
+}
+
+.basket-button {
+  grid-area: right;
+}
+
+.btn-filter {
+  grid-area: btn-filter;
+  color: #fff;
+  background-color: #9d0dfd;
+  border-color: #9d0dfd;
+}
+
+
 
 .category-img-place {
   width: 41vh;
