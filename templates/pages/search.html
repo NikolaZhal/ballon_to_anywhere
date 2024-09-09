@@ -32,11 +32,13 @@
         </div>
     </nav>
     <nav class="navbar navbar-light bg-light title-width">
-        <div align="right">
+        <ol class="breadcrumb-list">
             {% for type in show_parts %}
-            <a href="#{{type}}" class="btn btn-success">{{type}}</a>
+            <li class="breadcrumb-list__item">
+                <a href="#{{type}}" class="btn btn-success">{{type}}</a>
+            </li>
             {% endfor %}
-        </div>
+        </ol>
     </nav>
     <div class="main-sidebar">
         <aside id="sidenav-open" class="sidebar">

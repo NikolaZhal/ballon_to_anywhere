@@ -36,6 +36,7 @@
 
 .navbar {
   padding-top: 0;
+  padding-bottom: 0;
 }
 
 .button-navbar {
@@ -47,7 +48,7 @@
     "left right";
   /* background: #ff0000; */
   width: 50%;
-  justify-self: end;
+  /* justify-self: end; */
 }
 
 @media (max-width: 500px) {
@@ -57,7 +58,10 @@
     grid-template-areas:
       "right"
       "btn-filter";
+  }
 
+  .button-navbar {
+    justify-self: end;
   }
 }
 

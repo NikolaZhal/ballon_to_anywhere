@@ -17,3 +17,10 @@ footer table tr td a:hover,
 footer table tr td a:active {
     color: #6969b9;
 }
+
+footer {
+    position: absolute;
+    bottom: -210px;
+    height: 210px;
+    width: 100%;
+}
