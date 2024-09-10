@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
 {% extends "base.html" %}
 
 {% block content %}
@@ -10,15 +11,17 @@
     <br>
     <div>
         <table>
-            <tr>
-                <th><a href="/admin/productsgroups" class="btn btn-secondary">Группы товаров</a></th>
-                <th><a href="/admin/products" class="btn btn-secondary">Товары</a></th>
-                <th><a href="/admin/types" class="btn btn-secondary">Типы</a></th>
-                <th><a href="/admin/categories" class="btn btn-secondary">Категории</a></th>
-                <th><a href="/admin/banners" class="btn btn-secondary">Баннеры</a></th>
-                <th><a href="/admin/orders" class="btn btn-secondary">Заказы</a></th>
-                <th><a href="/admin/users" class="btn btn-secondary">Покупатели</a></th>
-            </tr>
+            <ol class="breadcrumb-list">
+                <li class="breadcrumb-list__item"><a href="/admin/productsgroups" class="btn btn-secondary">Группы
+                        товаров</a></li>
+                <li class="breadcrumb-list__item"><a href="/admin/products" class="btn btn-secondary">Товары</a></li>
+                <li class="breadcrumb-list__item"><a href="/admin/types" class="btn btn-secondary">Типы</a></li>
+                <li class="breadcrumb-list__item"><a href="/admin/categories" class="btn btn-secondary">Категории</a>
+                </li>
+                <li class="breadcrumb-list__item"><a href="/admin/banners" class="btn btn-secondary">Баннеры</a></li>
+                <li class="breadcrumb-list__item"><a href="/admin/orders" class="btn btn-secondary">Заказы</a></li>
+                <li class="breadcrumb-list__item"><a href="/admin/users" class="btn btn-secondary">Покупатели</a></li>
+            </ol>
         </table>
     </div>
     <div>

@@ -9,6 +9,9 @@
 </nav>
 {%if basket%}
 <form action="" method="post" class="form-width">
+    <div>
+        <p>{{ form.submit(type="submit", class="btn btn-primary", align="right") }}</p>
+    </div>
     <div class="basket-main-sidebar">
 
 
@@ -25,15 +28,9 @@
             </div>
 
 
-            <!--    <div>-->
-            <!--        <form action="" method="post">-->
-            <!--            <button type="submit" class="btn btn-success">Заказать</button>-->
-            <!--        </form>-->
-            <!--    </div>-->
-
 
         </div>
-        <div><p>{{ form.submit(type="submit", class="btn btn-primary", align="right") }}</p></div>
+
 
     </div>
 </form>

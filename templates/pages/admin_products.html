@@ -7,7 +7,7 @@
     {% endif %}
 </div>
 <br>
-<div>
+<div style="overflow: auto;">
     <table>
         <tr>
             <th>Фото</th>
@@ -25,10 +25,9 @@
             <td id="imgTd">
                 {% if product.img%}
                 <img src="../static/img/products/{{product.get_img()[0]}}" class="admin-img-delete"
-                     alt="404 картинка не нашлась(">
+                    alt="404 картинка не нашлась(">
                 {%else%}
-                <img class="admin-img-delete" src="../static/img/products/none.jpg"
-                     alt="404 картинка не нашлась("/>
+                <img class="admin-img-delete" src="../static/img/products/none.jpg" alt="404 картинка не нашлась(" />
                 {%endif%}
             </td>
             <td>{{ product.product_group.title }}</td>

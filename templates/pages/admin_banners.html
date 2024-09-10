@@ -7,7 +7,7 @@
     {% endif %}
 </div>
 <br>
-<div>
+<div style="overflow: auto;">
     <table>
         <tr>
             <th>Фото</th>
@@ -23,11 +23,9 @@
             <input type="text" value="{{ banner.title }}" name="productRemTitle" style="display: none">
             <td id="imgTd">
                 {% if banner.img%}
-                <img src="../static/img/banners/{{banner.img}}" class="admin-img-delete"
-                     alt="404 картинка не нашлась(">
+                <img src="../static/img/banners/{{banner.img}}" class="admin-img-delete" alt="404 картинка не нашлась(">
                 {%else%}
-                <img class="admin-img-delete" src="../static/img/banners/none.jpg"
-                     alt="404 картинка не нашлась("/>
+                <img class="admin-img-delete" src="../static/img/banners/none.jpg" alt="404 картинка не нашлась(" />
                 {%endif%}
             </td>
             <td>{{ banner.title }}</td>
