@@ -2,6 +2,7 @@
 
 {% block content %}
 <h1>Авторизация</h1>
+<div class="form-scale">
 <form action="" method="post">
     {{ form.hidden_tag() }}
     <p>
@@ -15,4 +16,5 @@
     </p>
     <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
 </form>
+</div>
 {% endblock %}

@@ -462,7 +462,7 @@ def edit_category(category_id):
     all_imgs = list(
         filter(
             lambda x: (x.endswith(".jpg") or x.endswith(".png"))
-            and x.split("_")[0] == str(category_id),
+                      and x.split("_")[0] == str(category_id),
             onlyfiles,
         )
     )
@@ -553,7 +553,7 @@ def edit_banner(banner_id):
     all_imgs = list(
         filter(
             lambda x: (x.endswith(".jpg") or x.endswith(".png"))
-            and x.split("_")[0] == str(banner_id),
+                      and x.split("_")[0] == str(banner_id),
             onlyfiles,
         )
     )
@@ -767,7 +767,7 @@ def edit_product(product_id, sender):
     all_imgs = list(
         filter(
             lambda x: (x.endswith(".jpg") or x.endswith(".png"))
-            and x.split("_")[0] == str(product_id),
+                      and x.split("_")[0] == str(product_id),
             onlyfiles,
         )
     )
@@ -870,7 +870,7 @@ def remove_item(type, id, sender):
             product_imgs = list(
                 filter(
                     lambda x: (x.endswith(".jpg") or x.endswith(".png"))
-                    and x.split("_")[0] == str(id),
+                              and x.split("_")[0] == str(id),
                     onlyfiles,
                 )
             )
@@ -897,7 +897,7 @@ def remove_item(type, id, sender):
                 product_imgs = list(
                     filter(
                         lambda x: (x.endswith(".jpg") or x.endswith(".png"))
-                        and x.split("_")[0] == str(color.id),
+                                  and x.split("_")[0] == str(color.id),
                         onlyfiles,
                     )
                 )
@@ -919,7 +919,7 @@ def remove_item(type, id, sender):
             banners_img = list(
                 filter(
                     lambda x: (x.endswith(".jpg") or x.endswith(".png"))
-                    and x.split("_")[0] == str(id),
+                              and x.split("_")[0] == str(id),
                     onlyfiles,
                 )
             )

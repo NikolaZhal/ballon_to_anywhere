@@ -20,7 +20,7 @@ class LoginForm(FlaskForm):
 
 
 class ConfirmationForm(FlaskForm):
-    code = StringField('Введите код подтверждения', validators=[DataRequired()])
+    code = StringField('Введите код подтверждения с почты', validators=[DataRequired()])
     submit = SubmitField('Подтвердить')
 
 # class ConfirmationForm(FlaskForm):

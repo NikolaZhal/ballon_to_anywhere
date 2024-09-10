@@ -161,10 +161,10 @@ footer {
 
 .form-scale {
   flex: 1;
-  max-width: 95vw;
+  max-width: 500px;
   justify-content: center;
   display: block;
-  margin: 0 auto;
+  margin: auto;
   text-align: left;
 }
 

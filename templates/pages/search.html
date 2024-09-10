@@ -50,7 +50,7 @@
                 <form action="" method="post">
                     <!-- <label class="form-label fashion-text">Цена</label> -->
                     {{ form.hidden_tag() }}
- иу                   <div>
+                  <div>
                         {{ form.csrf_token }}
                     </div>
                     {% for field in form if field.name not in ['csrf_token', 'submit', 'all_types', 'categories'] %}
