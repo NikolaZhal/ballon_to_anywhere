@@ -261,6 +261,7 @@ def show_product(product_group_id, product_id):
     )
     product = db_sess.query(Products).filter(Products.id == product_id).first()
     href = session.get("href") or "/search"
+    print(href)
     # db_sess.
     return render_template(
         "pages/show_product.html",

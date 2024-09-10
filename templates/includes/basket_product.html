@@ -1,14 +1,14 @@
-<link rel="stylesheet" href="{{ url_for('static', filename='css/product_style.css') }}">
+<!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/product_style.css') }}"> -->
 <link rel="stylesheet" href="{{ url_for('static', filename='css/basket_product.css') }}">
 
-<div class="product menu-item">
-    <div class="product-img-place">
+<div class="basket-product menu-item">
+    <div class="basket-product-img-place">
         {% if product.get_img()[0]%}
         <div id="carousel{{product.id}}" class="carousel slide" data-bs-ride="false">
             <div class="carousel-inner">
                 <div class="carousel-item active">
                     <img class="d-block product-img" src="/static/img/products/{{product.get_img()[0]}}"
-                         alt="{{product.get_img()[0]}}">
+                        alt="{{product.get_img()[0]}}">
                 </div>
                 {% for item in product.get_img()[1:]%}
                 <div class="carousel-item">
@@ -27,45 +27,55 @@
         </div>
         {%else%}
         <img class="product-img" src="/static/img/products/none.jpg"
-             alt="/static/img/products/{{product.get_img()[0]}}"/>
+            alt="/static/img/products/{{product.get_img()[0]}}" />
         {%endif%}
     </div>
-    <div class="product-description">
+    <div class="basket-product-description">
         <div align="left">
             <a href="/show_product/{{product.product_group_id}}/{{product.id}}"
-               class="product-no-title text-decoration:none">
+                onclick="saveHref('/show_product/{{product.product_group_id}}/{{product.id}}', {% if current_user.is_authenticated %}'{{current_user.id}}' {%endif%})"
+                class="product-no-title text-decoration:none">
                 <div>
-                    <span class="product-description-title">{{product.product_group.title}}</span><br>
-                    <span class="product-description-description">{{product.product_group.description}}</span><br>
-                    <span class="product-description-color">{{product.color}}</span><br>
-                    <span class="product-description-color">{% autoescape false %}{{product.product_group.get_average_mark()}}{% endautoescape %}</span><br>
-                    <span class="product-description-price">{% autoescape false %}{{product.get_beautiful_price()}}{% endautoescape %}</span>
+                    <span class="product-description-title">{{product.product_group.title}}</span>
+                    <span class="product-description-description">{{product.product_group.description}}</span>
+
                 </div>
             </a>
         </div>
     </div>
-    <div class="product-right">
+    <div class="sub-description">
+        <span class="product-description-color">{{product.color}}</span>
+        <span class="product-description-mark">{% autoescape false %}{{product.product_group.get_average_mark()}}{%
+            endautoescape %}</span>
+        <span class="product-description-price">{% autoescape false %}{{product.get_beautiful_price()}}{% endautoescape
+            %}</span>
+    </div>
+    <div class="basket-product-right">
+
         <div>
-            {{product.get_price() * amount}}
+            <span class="basket-sum-price">
+                {{product.get_price() * amount}}
+            </span>
         </div>
         <div class="btn-group" role="group" aria-label="Basic example">
             <button class="btn btn-danger"
-                    onclick="minusFromBasket('{{ product.id }}'{% if current_user.is_authenticated %}, '{{current_user.id}}' {%endif%});">
+                onclick="minusFromBasket('{{ product.id }}'{% if current_user.is_authenticated %}, '{{current_user.id}}' {%endif%});">
                 -
             </button>
-            <p>{{amount}}</p>
+            <span class="basket-count">{{amount}}</span>
 
             <button class="btn btn-success"
-                    onclick="addToBasket('{{ product.id }}'{% if current_user.is_authenticated %}, '{{current_user.id}}' {%endif%});">
+                onclick="addToBasket('{{ product.id }}'{% if current_user.is_authenticated %}, '{{current_user.id}}' {%endif%});">
                 +
             </button>
         </div>
-        <div style="border-radius: 0.25em;">{{item(class="custom-checkbox", style="border-radius: 0.25em;")}}</div>
         <div>
             <button type="submit" class="delete-cart-button"
-                    onclick="removeFromBasket('{{ product.id }}'{% if current_user.is_authenticated %}, '{{current_user.id}}' {%endif%});">
+                onclick="removeFromBasket('{{ product.id }}'{% if current_user.is_authenticated %}, '{{current_user.id}}' {%endif%});">
 
             </button>
         </div>
+        <div style="border-radius: 0.25em;">{{item(class="custom-checkbox", style="border-radius: 0.25em;")}}</div>
+
     </div>
 </div>
