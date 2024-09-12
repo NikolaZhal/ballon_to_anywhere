@@ -119,10 +119,9 @@ def index_post():
 
 @app.route("/banner/<int:banner_id>")
 def banner_get(banner_id):
-    db_sess = db_session.create_session()
-    banner = db_sess.query(Banners).filter(Banners.id == banner_id).first()
-    db_sess.close()
-    return render_template("pages/banners.html", banner=banner)
+    with db_session.create_session() as db_sess:
+        banner = db_sess.query(Banners).filter(Banners.id == banner_id).first()
+        return render_template("pages/banners.html", banner=banner)
 
 
 @app.route("/search", methods=["GET", "POST"])
