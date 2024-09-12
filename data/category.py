@@ -22,3 +22,5 @@ class Category(SqlAlchemyBase):
 
     def get_products_id(self):
         return str([i.id for i in self.products])
+    def __repr__(self):
+        return f'<category {self.id}, {self.title}>'

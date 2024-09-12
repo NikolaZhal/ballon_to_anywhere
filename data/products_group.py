@@ -23,4 +23,4 @@ class ProductGroup(SqlAlchemyBase, SerializerMixin):
         return f'{average}<span style="color: yellow;">★</span> {len(self.comments)} оценок'
 
     def __repr__(self):
-        return f'<products_group> {self.id} {self.title}'
+        return f'<products_group {self.id} {self.title}>'

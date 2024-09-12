@@ -100,6 +100,7 @@ def index_get():
     types = db_sess.query(Types).all()
     categories = db_sess.query(Category).all()
     banners = db_sess.query(Banners).filter(Banners.active == True).all()
+    db_sess.close()
     return render_template(
         "pages/index.html",
         types=types,
@@ -113,13 +114,6 @@ def index_get():
 @app.route("/index", methods=["POST"])
 def index_post():
     text = request.form.get("text")
-    db_sess = db_session.create_session()
-    types = db_sess.query(Types).all()
-    for type in types:
-        for product in type.products:
-            for product_color in product.products:
-                if product_color.img:
-                    product_color.img = product_color.img.split(", ")
     return redirect(f"/search?text={text}")
 
 
@@ -127,6 +121,7 @@ def index_post():
 def banner_get(banner_id):
     db_sess = db_session.create_session()
     banner = db_sess.query(Banners).filter(Banners.id == banner_id).first()
+    db_sess.close()
     return render_template("pages/banners.html", banner=banner)
 
 
@@ -462,7 +457,7 @@ def edit_category(category_id):
     all_imgs = list(
         filter(
             lambda x: (x.endswith(".jpg") or x.endswith(".png"))
-                      and x.split("_")[0] == str(category_id),
+            and x.split("_")[0] == str(category_id),
             onlyfiles,
         )
     )
@@ -553,7 +548,7 @@ def edit_banner(banner_id):
     all_imgs = list(
         filter(
             lambda x: (x.endswith(".jpg") or x.endswith(".png"))
-                      and x.split("_")[0] == str(banner_id),
+            and x.split("_")[0] == str(banner_id),
             onlyfiles,
         )
     )
@@ -767,7 +762,7 @@ def edit_product(product_id, sender):
     all_imgs = list(
         filter(
             lambda x: (x.endswith(".jpg") or x.endswith(".png"))
-                      and x.split("_")[0] == str(product_id),
+            and x.split("_")[0] == str(product_id),
             onlyfiles,
         )
     )
@@ -870,7 +865,7 @@ def remove_item(type, id, sender):
             product_imgs = list(
                 filter(
                     lambda x: (x.endswith(".jpg") or x.endswith(".png"))
-                              and x.split("_")[0] == str(id),
+                    and x.split("_")[0] == str(id),
                     onlyfiles,
                 )
             )
@@ -897,7 +892,7 @@ def remove_item(type, id, sender):
                 product_imgs = list(
                     filter(
                         lambda x: (x.endswith(".jpg") or x.endswith(".png"))
-                                  and x.split("_")[0] == str(color.id),
+                        and x.split("_")[0] == str(color.id),
                         onlyfiles,
                     )
                 )
@@ -919,7 +914,7 @@ def remove_item(type, id, sender):
             banners_img = list(
                 filter(
                     lambda x: (x.endswith(".jpg") or x.endswith(".png"))
-                              and x.split("_")[0] == str(id),
+                    and x.split("_")[0] == str(id),
                     onlyfiles,
                 )
             )
