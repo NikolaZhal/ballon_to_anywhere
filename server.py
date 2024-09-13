@@ -126,243 +126,199 @@ def banner_get(banner_id):
 
 @app.route("/search", methods=["GET", "POST"])
 def search_get():
-    db_sess = db_session.create_session()
-    # types_db = db_sess.query(Types).all()
-    # types_data = [(i.id, i.title) for i in types_db]
-    categories_db = db_sess.query(Category).all()
-    categories_data = [(i.id, i.title) for i in categories_db]
-    form = SearchForm(categories_data=categories_data)
-    if form.validate_on_submit():
-        text = request.form.get("text", default="", type=str)
-        min_cost = form.min_cost.data
-        max_cost = form.max_cost.data
-        category = form.categories.data
-        # types = ', '.join([str(i) for i in form.types.data]) or -1
-        return redirect(
-            f"/search?text={text}&min_cost={min_cost}&max_cost={max_cost}&category={category}#1"
-        )
-    elif request.method == "GET":
-        text = request.args.get("text", default="", type=str)
-        min_cost = request.args.get("min_cost", default=0, type=int)
-        max_cost = request.args.get("max_cost", type=int)
-        category = request.args.get("category", type=int, default=-1)
-        # types_post = [int(i) for i in request.args.get("types", default='-1', type=str).split(', ')]
-        # # настройка формы
-        # if -1 in types_post:
-        #     types_post = [i[0] for i in form.types.choices]
-        # form.types.data = types_post
-        form.min_cost.data = min_cost
-        form.max_cost.data = max_cost
-        form.categories.data = category
+    with db_session.create_session() as db_sess:
+        # db_sess = db_session.create_session()
+        # types_db = db_sess.query(Types).all()
+        # types_data = [(i.id, i.title) for i in types_db]
+        categories_db = db_sess.query(Category).all()
+        categories_data = [(i.id, i.title) for i in categories_db]
+        form = SearchForm(categories_data=categories_data)
+        if form.validate_on_submit():
+            text = request.form.get("text", default="", type=str)
+            min_cost = form.min_cost.data
+            max_cost = form.max_cost.data
+            category = form.categories.data
+            # types = ', '.join([str(i) for i in form.types.data]) or -1
+            return redirect(
+                f"/search?text={text}&min_cost={min_cost}&max_cost={max_cost}&category={category}#1"
+            )
+        elif request.method == "GET":
+            text = request.args.get("text", default="", type=str)
+            min_cost = request.args.get("min_cost", default=0, type=int)
+            max_cost = request.args.get("max_cost", type=int)
+            category = request.args.get("category", type=int, default=-1)
+            # types_post = [int(i) for i in request.args.get("types", default='-1', type=str).split(', ')]
+            # # настройка формы
+            # if -1 in types_post:
+            #     types_post = [i[0] for i in form.types.choices]
+            # form.types.data = types_post
+            form.min_cost.data = min_cost
+            form.max_cost.data = max_cost
+            form.categories.data = category
 
-        products = []
-        products_color = []
-        # if min_cost == 0 and max_cost == -1
-        if text:
-            for word in text.split():
-                products.append(
-                    db_sess.query(Products)
-                    .join(Products.product_group)
-                    .filter(
-                        (
-                            Products.product_group.property.mapper.class_.title.like(
-                                f"%{word}%"
-                            )
-                        )
-                        | (
-                            Products.product_group.property.mapper.class_.description.like(
-                                f"%{word}%"
-                            )
-                        )
+            products = []
+            products_color = []
+            # if min_cost == 0 and max_cost == -1
+            if text:
+                for word in text.split():
+                    products.append(
+                        db_sess.query(Products)
+                        .join(Products.product_group)
+                        .filter((Products.product_group.property.mapper.class_.title.like(f"%{word}%"))
+                            | (Products.product_group.property.mapper.class_.description.like(f"%{word}%")))
+                        # .filter(Products.product_group.property.mapper.class_.type.in_(types_post))
                     )
-                    # .filter(Products.product_group.property.mapper.class_.type.in_(types_post))
-                )
+                    # Category.id.in_(form.categories.data)
 
-                # Category.id.in_(form.categories.data)
-
-                products_color.append(
-                    db_sess.query(Products)
-                    .join(Products.product_group)
-                    .filter(Products.color.like(f"%{word}%"))
-                )
-            turn = products + products_color
-        else:
-            turn = [db_sess.query(Products).join(Products.product_group)]
-        #
-        if category != -1:
-            for i, item in enumerate(turn):
-                # .filter(ZKUser.groups.any(ZKGroup.id.in_([1, 2, 3])))
-                turn[i] = item.filter(
-                    Products.category.any(
-                        Category.id.in_(
-                            [
-                                category,
-                            ]
-                        )
+                    products_color.append(
+                        db_sess.query(Products)
+                        .join(Products.product_group)
+                        .filter(Products.color.like(f"%{word}%"))
                     )
-                )
-        if max_cost:
-            # to_show = sorted(filter(lambda x: min_cost <= x.cost <= max_cost, set(turn)), key=lambda z: turn.index(z))
+                turn = products + products_color
+            else:
+                turn = [db_sess.query(Products).join(Products.product_group)]
+            #
+            if category != -1:
+                for i, item in enumerate(turn):
+                    # .filter(ZKUser.groups.any(ZKGroup.id.in_([1, 2, 3])))
+                    turn[i] = item.filter(Products.category.any(Category.id.in_([category,])))
+            if max_cost:
+                # to_show = sorted(filter(lambda x: min_cost <= x.cost <= max_cost, set(turn)), key=lambda z: turn.index(z))
+                for i, item in enumerate(turn):
+                    turn[i] = item.filter(Products.cost - Products.sale <= max_cost)
+            to_show = []
             for i, item in enumerate(turn):
-                turn[i] = item.filter(Products.cost - Products.sale <= max_cost)
-        to_show = []
-        for i, item in enumerate(turn):
-            to_show.extend(item.filter(Products.cost >= min_cost).all())
-        show_parts = {}
-        for product in to_show:
-            type_title = product.product_group.type_relation.title
-            if type_title not in show_parts:
-                show_parts[type_title] = []
-            show_parts[type_title].append(product)
-        types_db = db_sess.query(Types).all()
-        return render_template(
-            "pages/search.html",
-            title="product",
-            products=to_show,
-            text=text,
-            min_cost=min_cost,
-            max_cost=max_cost or "",
-            types=types_db,
-            form=form,
-            show_parts=show_parts,
-        )
-    elif request.method == "POST":
-        text = request.form.get("text", default="", type=str)
-        min_cost = request.args.get("min_cost", default=0, type=int)
-        max_cost = request.args.get("max_cost", type=int)
-        category = request.args.get("category", type=int, default=-1)
+                to_show.extend(item.filter(Products.cost >= min_cost).all())
+            show_parts = {}
+            for product in to_show:
+                type_title = product.product_group.type_relation.title
+                if type_title not in show_parts:
+                    show_parts[type_title] = []
+                show_parts[type_title].append(product)
+            types_db = db_sess.query(Types).all()
+            return render_template(
+                "pages/search.html",
+                title="product",
+                products=to_show,
+                text=text,
+                min_cost=min_cost,
+                max_cost=max_cost or "",
+                types=types_db,
+                form=form,
+                show_parts=show_parts,
+            )
+        elif request.method == "POST":
+            text = request.form.get("text", default="", type=str)
+            min_cost = request.args.get("min_cost", default=0, type=int)
+            max_cost = request.args.get("max_cost", type=int)
+            category = request.args.get("category", type=int, default=-1)
 
-        return redirect(
-            f"/search?text={text}&min_cost={min_cost}&max_cost={max_cost}&category={category}#1"
-        )
+            return redirect(
+                f"/search?text={text}&min_cost={min_cost}&max_cost={max_cost}&category={category}#1"
+            )
 
 
-@app.route("/categories", methods=["GET", "POST"])
-def category_get():
-    db_sess = db_session.create_session()
-    category_id = request.args.get("category", default=0, type=int)
-    category = db_sess.query(Category).filter(Category.id == category_id).first()
-    return str([i.product_group.title for i in category.products])
-
-
-@app.route(
-    "/show_product/<int:product_group_id>/<int:product_id>", methods=["GET", "POST"]
-)
+@app.route("/show_product/<int:product_group_id>/<int:product_id>", methods=["GET", "POST"])
 def show_product(product_group_id, product_id):
-    db_sess = db_session.create_session()
-    product_group = (
-        db_sess.query(ProductGroup).filter(ProductGroup.id == product_group_id).first()
-    )
-    product = db_sess.query(Products).filter(Products.id == product_id).first()
-    href = session.get("href") or "/search"
-    print(href)
-    # db_sess.
-    return render_template(
-        "pages/show_product.html",
-        title="product",
-        product=product,
-        product_group=product_group,
-        href=href,
-    )
+    with db_session.create_session() as db_sess:
+        product_group = (db_sess.query(ProductGroup).filter(ProductGroup.id == product_group_id).first())
+        product = db_sess.query(Products).filter(Products.id == product_id).first()
+        href = session.get("href") or "/search"
+        print(href)
+        return render_template(
+            "pages/show_product.html",
+            title="product",
+            product=product,
+            product_group=product_group,
+            href=href,
+        )
 
 
-@app.route(
-    "/comment_product/<int:product_group_id>/<int:product_id>", methods=["GET", "POST"]
-)
+@app.route("/comment_product/<int:product_group_id>/<int:product_id>", methods=["GET", "POST"])
 @login_required
 def comment_product(product_group_id, product_id):
-    form = CommentsForm()
-    if request.method == "GET":
-        db_sess = db_session.create_session()
-        comment = (
-            db_sess.query(Comments)
-            .filter(
-                Comments.product_group_id == product_group_id,
-                Comments.user_id == current_user.id,
-            )
-            .first()
-        )
-        if comment:
-            form.plus.data = comment.plus
-            form.minus.data = comment.minus
-            form.content.data = comment.content
-            form.mark.data = comment.mark
-    elif form.validate_on_submit():
-        db_sess = db_session.create_session()
-        comment = (
-            db_sess.query(Comments)
-            .filter(
-                Comments.product_group_id == product_group_id,
-                Comments.user_id == current_user.id,
-            )
-            .first()
-        )
-        new = False
-        if not comment:
-            comment = Comments()
-            new = True
-        comment.plus = form.plus.data
-        comment.minus = form.minus.data
-        comment.content = form.content.data
-        comment.mark = form.mark.data
-        comment.product_group_id = int(product_group_id)
-        comment.user_id = int(current_user.id)
-        if new:
-            db_sess.add(comment)
-        db_sess.commit()
-        return redirect(f"/show_product/{product_group_id}/{product_id}")
-    return render_template("pages/comment_form.html", title="Комментарий", form=form)
+    with db_session.create_session() as db_sess:
+        form = CommentsForm()
+        if request.method == "GET":
+            comment = (db_sess.query(Comments).filter(
+                    Comments.product_group_id == product_group_id,
+                    Comments.user_id == current_user.id,).first())
+            if comment:
+                form.plus.data = comment.plus
+                form.minus.data = comment.minus
+                form.content.data = comment.content
+                form.mark.data = comment.mark
+        elif form.validate_on_submit():
+            comment = (db_sess.query(Comments).filter(
+                    Comments.product_group_id == product_group_id,
+                    Comments.user_id == current_user.id,).first())
+            new = False
+            if not comment:
+                comment = Comments()
+                new = True
+            comment.plus = form.plus.data
+            comment.minus = form.minus.data
+            comment.content = form.content.data
+            comment.mark = form.mark.data
+            comment.product_group_id = int(product_group_id)
+            comment.user_id = int(current_user.id)
+            if new:
+                db_sess.add(comment)
+            db_sess.commit()
+            return redirect(f"/show_product/{product_group_id}/{product_id}")
+        return render_template("pages/comment_form.html", title="Комментарий", form=form)
 
 
 @app.route("/admin/categories", methods=["GET", "POST"])
 @login_required
 def admin_categories():
-    if current_user.admin:
-        filenames = [""]
-        form = CategoryForm()
-        db_sess = db_session.create_session()
-        categories = db_sess.query(Category).all()
+    with db_session.create_session() as db_sess:
+        if current_user.admin:
+            filenames = [""]
+            form = CategoryForm()
+            categories = db_sess.query(Category).all()
 
-        if form.validate_on_submit():
-            # добавление продукта
-            categories = Category()
-            categories.title = form.title.data
-            form.title.data = ""
-            db_sess = db_session.create_session()
-            db_sess.add(categories)
-            db_sess.commit()
-            file = form.img.data
-            data_filename = secure_filename(file.filename)
-            data_filename = f"{categories.id}_{0}_{datetime.now().date()}.{data_filename.split('.')[-1]}"
-            file.save(os.path.join("./static/img/categories", data_filename))
-            categories.img = data_filename
-            db_sess.commit()
-            return redirect("/admin/categories")
-        if request.method == "POST":
-            db_sess = db_session.create_session()
-            for id in request.form:
-                type = db_sess.query(Types).filter(Types.id == id).first()
-                type.title = request.form[id]
+            if form.validate_on_submit():
+                # добавление продукта
+                categories = Category()
+                categories.title = form.title.data
+                form.title.data = ""
+                db_sess.add(categories)
                 db_sess.commit()
-                # request.form[id] = ''
-            return redirect("/admin/types")
-        return render_template(
-            "pages/admin_categories.html",
-            title="Админ панель",
-            categories=categories,
-            form=form,
-        )
+                file = form.img.data
+                data_filename = secure_filename(file.filename)
+                data_filename = f"{categories.id}_{0}_{datetime.now().date()}.{data_filename.split('.')[-1]}"
+                file.save(os.path.join("./static/img/categories", data_filename))
+                categories.img = data_filename
+                db_sess.commit()
+                return redirect("/admin/categories")
+            if request.method == "POST":
+                for id in request.form:
+                    type = db_sess.query(Types).filter(Types.id == id).first()
+                    type.title = request.form[id]
+                    db_sess.commit()
+                    # request.form[id] = ''
+                return redirect("/admin/types")
+            return render_template(
+                "pages/admin_categories.html",
+                title="Админ панель",
+                categories=categories,
+                form=form,
+            )
+        else:
+            return render_template("pages/no_rights.html")
 
 
 @app.route("/admin/banners", methods=["GET", "POST"])
 @login_required
 def admin_banners():
     if current_user.admin:
-        db_sess = db_session.create_session()
-        banners = db_sess.query(Banners).all()
-        return render_template(
-            "pages/admin_banners.html", title="Админ панель", banners=banners
-        )
+        with db_session.create_session() as db_sess:
+            banners = db_sess.query(Banners).all()
+            return render_template(
+                "pages/admin_banners.html", title="Админ панель", banners=banners
+            )
     else:
         return render_template("pages/no_rights.html")
 
