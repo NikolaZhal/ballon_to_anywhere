@@ -164,8 +164,18 @@ def search_get():
                     products.append(
                         db_sess.query(Products)
                         .join(Products.product_group)
-                        .filter((Products.product_group.property.mapper.class_.title.like(f"%{word}%"))
-                            | (Products.product_group.property.mapper.class_.description.like(f"%{word}%")))
+                        .filter(
+                            (
+                                Products.product_group.property.mapper.class_.title.like(
+                                    f"%{word}%"
+                                )
+                            )
+                            | (
+                                Products.product_group.property.mapper.class_.description.like(
+                                    f"%{word}%"
+                                )
+                            )
+                        )
                         # .filter(Products.product_group.property.mapper.class_.type.in_(types_post))
                     )
                     # Category.id.in_(form.categories.data)
@@ -182,7 +192,15 @@ def search_get():
             if category != -1:
                 for i, item in enumerate(turn):
                     # .filter(ZKUser.groups.any(ZKGroup.id.in_([1, 2, 3])))
-                    turn[i] = item.filter(Products.category.any(Category.id.in_([category,])))
+                    turn[i] = item.filter(
+                        Products.category.any(
+                            Category.id.in_(
+                                [
+                                    category,
+                                ]
+                            )
+                        )
+                    )
             if max_cost:
                 # to_show = sorted(filter(lambda x: min_cost <= x.cost <= max_cost, set(turn)), key=lambda z: turn.index(z))
                 for i, item in enumerate(turn):
@@ -219,10 +237,16 @@ def search_get():
             )
 
 
-@app.route("/show_product/<int:product_group_id>/<int:product_id>", methods=["GET", "POST"])
+@app.route(
+    "/show_product/<int:product_group_id>/<int:product_id>", methods=["GET", "POST"]
+)
 def show_product(product_group_id, product_id):
     with db_session.create_session() as db_sess:
-        product_group = (db_sess.query(ProductGroup).filter(ProductGroup.id == product_group_id).first())
+        product_group = (
+            db_sess.query(ProductGroup)
+            .filter(ProductGroup.id == product_group_id)
+            .first()
+        )
         product = db_sess.query(Products).filter(Products.id == product_id).first()
         href = session.get("href") or "/search"
         print(href)
@@ -235,24 +259,36 @@ def show_product(product_group_id, product_id):
         )
 
 
-@app.route("/comment_product/<int:product_group_id>/<int:product_id>", methods=["GET", "POST"])
+@app.route(
+    "/comment_product/<int:product_group_id>/<int:product_id>", methods=["GET", "POST"]
+)
 @login_required
 def comment_product(product_group_id, product_id):
     with db_session.create_session() as db_sess:
         form = CommentsForm()
         if request.method == "GET":
-            comment = (db_sess.query(Comments).filter(
+            comment = (
+                db_sess.query(Comments)
+                .filter(
                     Comments.product_group_id == product_group_id,
-                    Comments.user_id == current_user.id,).first())
+                    Comments.user_id == current_user.id,
+                )
+                .first()
+            )
             if comment:
                 form.plus.data = comment.plus
                 form.minus.data = comment.minus
                 form.content.data = comment.content
                 form.mark.data = comment.mark
         elif form.validate_on_submit():
-            comment = (db_sess.query(Comments).filter(
+            comment = (
+                db_sess.query(Comments)
+                .filter(
                     Comments.product_group_id == product_group_id,
-                    Comments.user_id == current_user.id,).first())
+                    Comments.user_id == current_user.id,
+                )
+                .first()
+            )
             new = False
             if not comment:
                 comment = Comments()
@@ -267,82 +303,81 @@ def comment_product(product_group_id, product_id):
                 db_sess.add(comment)
             db_sess.commit()
             return redirect(f"/show_product/{product_group_id}/{product_id}")
-        return render_template("pages/comment_form.html", title="Комментарий", form=form)
+        return render_template(
+            "pages/comment_form.html", title="Комментарий", form=form
+        )
 
 
 @app.route("/admin/categories", methods=["GET", "POST"])
 @login_required
 def admin_categories():
+    if not current_user.admin:
+        return render_template("pages/no_rights.html")
     with db_session.create_session() as db_sess:
-        if current_user.admin:
-            filenames = [""]
-            form = CategoryForm()
-            categories = db_sess.query(Category).all()
+        filenames = [""]
+        form = CategoryForm()
+        categories = db_sess.query(Category).all()
 
-            if form.validate_on_submit():
-                # добавление продукта
-                categories = Category()
-                categories.title = form.title.data
-                form.title.data = ""
-                db_sess.add(categories)
+        if form.validate_on_submit():
+            # добавление продукта
+            categories = Category()
+            categories.title = form.title.data
+            form.title.data = ""
+            db_sess.add(categories)
+            db_sess.commit()
+            file = form.img.data
+            data_filename = secure_filename(file.filename)
+            data_filename = f"{categories.id}_{0}_{datetime.now().date()}.{data_filename.split('.')[-1]}"
+            file.save(os.path.join("./static/img/categories", data_filename))
+            categories.img = data_filename
+            db_sess.commit()
+            return redirect("/admin/categories")
+        if request.method == "POST":
+            for id in request.form:
+                type = db_sess.query(Types).filter(Types.id == id).first()
+                type.title = request.form[id]
                 db_sess.commit()
-                file = form.img.data
-                data_filename = secure_filename(file.filename)
-                data_filename = f"{categories.id}_{0}_{datetime.now().date()}.{data_filename.split('.')[-1]}"
-                file.save(os.path.join("./static/img/categories", data_filename))
-                categories.img = data_filename
-                db_sess.commit()
-                return redirect("/admin/categories")
-            if request.method == "POST":
-                for id in request.form:
-                    type = db_sess.query(Types).filter(Types.id == id).first()
-                    type.title = request.form[id]
-                    db_sess.commit()
-                    # request.form[id] = ''
-                return redirect("/admin/types")
-            return render_template(
-                "pages/admin_categories.html",
-                title="Админ панель",
-                categories=categories,
-                form=form,
-            )
-        else:
-            return render_template("pages/no_rights.html")
+                # request.form[id] = ''
+            return redirect("/admin/types")
+        return render_template(
+            "pages/admin_categories.html",
+            title="Админ панель",
+            categories=categories,
+            form=form,
+        )
 
 
 @app.route("/admin/banners", methods=["GET", "POST"])
 @login_required
 def admin_banners():
-    if current_user.admin:
-        with db_session.create_session() as db_sess:
-            banners = db_sess.query(Banners).all()
-            return render_template(
-                "pages/admin_banners.html", title="Админ панель", banners=banners
-            )
-    else:
+    if not current_user.admin:
         return render_template("pages/no_rights.html")
+    with db_session.create_session() as db_sess:
+        banners = db_sess.query(Banners).all()
+        return render_template(
+            "pages/admin_banners.html", title="Админ панель", banners=banners
+        )
 
 
 @app.route("/admin/types", methods=["GET", "POST"])
 @login_required
 def admin_types():
-    if current_user.admin:
-        filenames = [""]
-        form = TypeForm()
-        db_sess = db_session.create_session()
-        types = db_sess.query(Types).all()
+    if not current_user.admin:
+        return render_template("pages/no_rights.html")
 
+    filenames = [""]
+    form = TypeForm()
+    with db_session.create_session() as db_sess:
+        types = db_sess.query(Types).all()
         if form.validate_on_submit():
             # добавление продукта
             type = Types()
             type.title = form.title.data
             form.title.data = ""
-            db_sess = db_session.create_session()
             db_sess.add(type)
             db_sess.commit()
             return redirect("/admin/types")
         if request.method == "POST":
-            db_sess = db_session.create_session()
             for id in request.form:
                 type = db_sess.query(Types).filter(Types.id == id).first()
                 type.title = request.form[id]
@@ -357,8 +392,9 @@ def admin_types():
 @app.route("/admin/users", methods=["GET", "POST"])
 @login_required
 def admin_user():
-    if current_user.admin:
-        db_sess = db_session.create_session()
+    if not current_user.admin:
+        return render_template("pages/no_rights.html")
+    with db_session.create_session() as db_sess:
         users = db_sess.query(User).all()
         return render_template(
             "pages/admin_users.html", title="Админ панель", users=users
@@ -368,8 +404,9 @@ def admin_user():
 @app.route("/admin/orders", methods=["GET", "POST"])
 @login_required
 def admin_orders():
-    if current_user.admin:
-        db_sess = db_session.create_session()
+    if not current_user.admin:
+        return render_template("pages/no_rights.html")
+    with db_session.create_session() as db_sess:
         orders = db_sess.query(Order).all()
         return render_template(
             "pages/admin_orders.html", title="Админ панель", orders=orders
@@ -379,34 +416,36 @@ def admin_orders():
 @app.route("/admin/products", methods=["GET", "POST"])
 @login_required
 def admin_products():
-    if current_user.admin:
-        db_sess = db_session.create_session()
+    if not current_user.admin:
+        return render_template("pages/no_rights.html")
+    with db_session.create_session() as db_sess:
         products = db_sess.query(Products).all()
         return render_template(
             "pages/admin_products.html", title="Админ панель", products=products
         )
-    else:
-        return render_template("pages/no_rights.html")
 
 
 @app.route("/admin/productsgroups", methods=["GET", "POST"])
 @login_required
 def admin_productsgroup():
-    if current_user.admin:
-        db_sess = db_session.create_session()
+    if not current_user.admin:
+        return render_template("pages/no_rights.html")
+
+    with db_session.create_session() as db_sess:
         productgroups = db_sess.query(ProductGroup).all()
         return render_template(
             "pages/admin_product_groups.html",
             title="Админ панель",
             productgroups=productgroups,
         )
-    else:
-        return render_template("pages/no_rights.html")
 
 
 @app.route("/admin/edit-category/<int:category_id>", methods=["GET", "POST"])
 @login_required
 def edit_category(category_id):
+    if not current_user.admin:
+        return render_template("pages/no_rights.html")
+
     mypath = "./static/img/categories"
     onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
     all_imgs = list(
@@ -417,87 +456,89 @@ def edit_category(category_id):
         )
     )
 
-    db_sess = db_session.create_session()
-    products = db_sess.query(Products).all()
-    products_data = []
-    for product in products:
-        products_data.append(
-            (product.id, product.product_group.title + " " + product.color)
-        )
-
-    db_sess = db_session.create_session()
-    category = db_sess.query(Category).filter(Category.id == category_id).first()
-    if not category:
-        return "Такогой категории нет"
-    form = CategoryForm()
-    if request.method == "GET":
-        if category:
-            form.title.data = category.title
-        else:
-            abort(404)
-    if form.validate_on_submit():
-        db_sess = db_session.create_session()
+    with db_session.create_session() as db_sess:
+        products = db_sess.query(Products).all()
+        products_data = []
+        for product in products:
+            products_data.append(
+                (product.id, product.product_group.title + " " + product.color)
+            )
         category = db_sess.query(Category).filter(Category.id == category_id).first()
-        if category:
-            category.title = form.title.data
-            db_sess.commit()
-
-            if form.img.data.filename != "":
-                if len(all_imgs):
-                    os.remove(os.path.join("./static/img/categories", all_imgs[0]))
-
-                file = form.img.data
-                data_filename = secure_filename(file.filename)
-                data_filename = f"{category_id}_{0}_{datetime.now().date()}.{data_filename.split('.')[-1]}"
-                file.save(os.path.join("./static/img/categories", data_filename))
-                category.img = data_filename
+        if not category:
+            return "Такогой категории нет"
+        form = CategoryForm()
+        if request.method == "GET":
+            if category:
+                form.title.data = category.title
+            else:
+                abort(404)
+        if form.validate_on_submit():
+            category = (
+                db_sess.query(Category).filter(Category.id == category_id).first()
+            )
+            if category:
+                category.title = form.title.data
                 db_sess.commit()
 
-            db_sess.commit()
-            return redirect("/admin/categories")
-        else:
-            abort(404)
-    return render_template(
-        "pages/admin_edit_category.html", title="Редактирование Категории", form=form
-    )
+                if form.img.data.filename != "":
+                    if len(all_imgs):
+                        os.remove(os.path.join("./static/img/categories", all_imgs[0]))
+
+                    file = form.img.data
+                    data_filename = secure_filename(file.filename)
+                    data_filename = f"{category_id}_{0}_{datetime.now().date()}.{data_filename.split('.')[-1]}"
+                    file.save(os.path.join("./static/img/categories", data_filename))
+                    category.img = data_filename
+                    db_sess.commit()
+
+                db_sess.commit()
+                return redirect("/admin/categories")
+            else:
+                abort(404)
+        return render_template(
+            "pages/admin_edit_category.html",
+            title="Редактирование Категории",
+            form=form,
+        )
 
 
 @app.route("/admin/add-banner", methods=["GET", "POST"])
 @login_required
 def add_banner():
-    db_sess = db_session.create_session()
-    products = db_sess.query(Products).all()
-    products_data = []
-    for product in products:
-        products_data.append(
-            (product.id, product.product_group.title + " " + product.color)
-        )
-    form = BannerForm(products_data=products_data)
-    if form.validate_on_submit():
-        banner = Banners()
-        banner.title = form.title.data
-        banner.active = form.active.data
-        db_sess = db_session.create_session()
-        banner.products.extend(
-            db_sess.query(Products).filter(Products.id.in_(form.products.data))
-        )
-        db_sess.add(banner)
-        db_sess.commit()
-        file = form.img.data
-        data_filename = secure_filename(file.filename)
-        data_filename = (
-            f"{banner.id}_{0}_{datetime.now().date()}.{data_filename.split('.')[-1]}"
-        )
-        file.save(os.path.join("./static/img/banners", data_filename))
-        banner.img = data_filename
-        db_sess.commit()
-        return redirect("/admin/banners")
-    return render_template("pages/admin_add_banner.html", form=form)
+    if not current_user.admin:
+        return render_template("pages/no_rights.html")
+    with db_session.create_session() as db_sess:
+        products = db_sess.query(Products).all()
+        products_data = []
+        for product in products:
+            products_data.append(
+                (product.id, product.product_group.title + " " + product.color)
+            )
+        form = BannerForm(products_data=products_data)
+        if form.validate_on_submit():
+            banner = Banners()
+            banner.title = form.title.data
+            banner.active = form.active.data
+            banner.products.extend(
+                db_sess.query(Products).filter(Products.id.in_(form.products.data))
+            )
+            db_sess.add(banner)
+            db_sess.commit()
+            file = form.img.data
+            data_filename = secure_filename(file.filename)
+            data_filename = f"{banner.id}_{0}_{datetime.now().date()}.{data_filename.split('.')[-1]}"
+            file.save(os.path.join("./static/img/banners", data_filename))
+            banner.img = data_filename
+            db_sess.commit()
+            return redirect("/admin/banners")
+        return render_template("pages/admin_add_banner.html", form=form)
 
 
 @app.route("/admin/edit-banner/<int:banner_id>", methods=["GET", "POST"])
 @login_required
 def edit_banner(banner_id):
+    if not current_user.admin:
+        return render_template("pages/no_rights.html")
     mypath = "./static/img/banners"
     onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
     all_imgs = list(
@@ -508,120 +549,122 @@ def edit_banner(banner_id):
         )
     )
 
-    db_sess = db_session.create_session()
-    products = db_sess.query(Products).all()
-    products_data = []
-    for product in products:
-        products_data.append(
-            (product.id, product.product_group.title + " " + product.color)
-        )
-
-    db_sess = db_session.create_session()
-    banner = db_sess.query(Banners).filter(Banners.id == banner_id).first()
-    if not banner:
-        return "Такого баннера нет"
-    form = BannerForm(products_data=products_data, products=products_data)
-    if request.method == "GET":
-        if banner:
-            form.title.data = banner.title
-            form.active.data = banner.active
-            form.products.data = banner.get_products_id()
-        else:
-            abort(404)
-    if form.validate_on_submit():
-        db_sess = db_session.create_session()
-        banner = db_sess.query(Banners).filter(Banners.id == banner_id).first()
-        if banner:
-            banner.title = form.title.data
-            banner.active = form.active.data
-            banner.products = (
-                db_sess.query(Products)
-                .filter(Products.id.in_(form.products.data))
-                .all()
+    with db_session.create_session() as db_sess:
+        products = db_sess.query(Products).all()
+        products_data = []
+        for product in products:
+            products_data.append(
+                (product.id, product.product_group.title + " " + product.color)
             )
-            if form.img.data.filename != "":
-                if len(all_imgs):
-                    os.remove(os.path.join("./static/img/banners", all_imgs[0]))
+        banner = db_sess.query(Banners).filter(Banners.id == banner_id).first()
+        if not banner:
+            return "Такого баннера нет"
+        form = BannerForm(products_data=products_data, products=products_data)
+        if request.method == "GET":
+            if banner:
+                form.title.data = banner.title
+                form.active.data = banner.active
+                form.products.data = banner.get_products_id()
+            else:
+                abort(404)
+        if form.validate_on_submit():
+            banner = db_sess.query(Banners).filter(Banners.id == banner_id).first()
+            if banner:
+                banner.title = form.title.data
+                banner.active = form.active.data
+                banner.products = (
+                    db_sess.query(Products)
+                    .filter(Products.id.in_(form.products.data))
+                    .all()
+                )
+                if form.img.data.filename != "":
+                    if len(all_imgs):
+                        os.remove(os.path.join("./static/img/banners", all_imgs[0]))
 
-                file = form.img.data
-                data_filename = secure_filename(file.filename)
-                data_filename = f"{banner_id}_{0}_{datetime.now().date()}.{data_filename.split('.')[-1]}"
-                file.save(os.path.join("./static/img/banners", data_filename))
-                banner.img = data_filename
+                    file = form.img.data
+                    data_filename = secure_filename(file.filename)
+                    data_filename = f"{banner_id}_{0}_{datetime.now().date()}.{data_filename.split('.')[-1]}"
+                    file.save(os.path.join("./static/img/banners", data_filename))
+                    banner.img = data_filename
+                    db_sess.commit()
+
                 db_sess.commit()
-
-            db_sess.commit()
-            return redirect("/admin/banners")
-        else:
-            abort(404)
-    return render_template(
-        "pages/admin_add_banner.html", title="Редактирование Продукта", form=form
-    )
+                return redirect("/admin/banners")
+            else:
+                abort(404)
+        return render_template(
+            "pages/admin_add_banner.html", title="Редактирование Продукта", form=form
+        )
 
 
 @app.route("/admin/add-productgroup", methods=["GET", "POST"])
 @login_required
 def add_productgroup():
-    data = []
+    if not current_user.admin:
+        return render_template("pages/no_rights.html")
 
-    db_sess = db_session.create_session()
-    types = db_sess.query(Types).all()
-    types_data = []
-    for type in types:
-        types_data.append((type.id, type.title))
-    form = ProductGroupForm(types=types_data)
-    if form.validate_on_submit():
-        productgroup = ProductGroup()
-        productgroup.title = form.title.data
-        productgroup.description = form.description.data
-        productgroup.type = form.type.data
-        db_sess = db_session.create_session()
-        db_sess.add(productgroup)
-        db_sess.commit()
-        return redirect("/admin/productsgroups")
-    return render_template("pages/admin_add_products_group.html", data=data, form=form)
+    data = []
+    with db_session.create_session() as db_sess:
+        types = db_sess.query(Types).all()
+        types_data = []
+        for type in types:
+            types_data.append((type.id, type.title))
+        form = ProductGroupForm(types=types_data)
+        if form.validate_on_submit():
+            productgroup = ProductGroup()
+            productgroup.title = form.title.data
+            productgroup.description = form.description.data
+            productgroup.type = form.type.data
+            db_sess.add(productgroup)
+            db_sess.commit()
+            return redirect("/admin/productsgroups")
+        return render_template(
+            "pages/admin_add_products_group.html", data=data, form=form
+        )
 
 
 @app.route("/admin/edit-productgroup/<int:id>", methods=["GET", "POST"])
 @login_required
 def edit_product_group(id):
-    db_sess = db_session.create_session()
-    types = db_sess.query(Types).all()
-    types_data = []
-    for i in types:
-        types_data.append((i.id, i.title))
+    if not current_user.admin:
+        return render_template("pages/no_rights.html")
 
-    db_sess = db_session.create_session()
-    productgroup = db_sess.query(ProductGroup).filter(ProductGroup.id == id).first()
-    if not productgroup:
-        return "Такого продукта нет"
-    form = ProductGroupForm(types=types_data, type=int(productgroup.type))
-    if request.method == "GET":
-        if productgroup:
-            form.title.data = productgroup.title
-            form.description.data = productgroup.description
-            form.type.data = productgroup.type
-        else:
-            abort(404)
-    if form.validate_on_submit():
-        db_sess = db_session.create_session()
+    with db_session.create_session() as db_sess:
+        types = db_sess.query(Types).all()
+        types_data = []
+        for i in types:
+            types_data.append((i.id, i.title))
+
         productgroup = db_sess.query(ProductGroup).filter(ProductGroup.id == id).first()
-        if productgroup:
-            productgroup.title = form.title.data
-            productgroup.description = form.description.data
-            productgroup.type = form.type.data
-            db_sess.commit()
-            return redirect("/admin/productsgroups")
-        else:
-            abort(404)
-    db_sess = db_session.create_session()
-    data = {"change": "1"}
-    return render_template(
-        "pages/admin_add_products_group.html",
-        title="Редактирование Продукта",
-        form=form,
-        data=data,
-    )
+        if not productgroup:
+            return "Такого продукта нет"
+        form = ProductGroupForm(types=types_data, type=int(productgroup.type))
+        if request.method == "GET":
+            if productgroup:
+                form.title.data = productgroup.title
+                form.description.data = productgroup.description
+                form.type.data = productgroup.type
+            else:
+                abort(404)
+        if form.validate_on_submit():
+            productgroup = (
+                db_sess.query(ProductGroup).filter(ProductGroup.id == id).first()
+            )
+            if productgroup:
+                productgroup.title = form.title.data
+                productgroup.description = form.description.data
+                productgroup.type = form.type.data
+                db_sess.commit()
+                return redirect("/admin/productsgroups")
+            else:
+                abort(404)
+        data = {"change": "1"}
+        return render_template(
+            "pages/admin_add_products_group.html",
+            title="Редактирование Продукта",
+            form=form,
+            data=data,
+        )
 
 
 @app.route("/admin/products-productgroup/<int:group_id>")
