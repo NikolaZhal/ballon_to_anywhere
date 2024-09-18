@@ -28,7 +28,7 @@
             <input type="text" value="{{ product.title }}" name="productRemTitle" style="display: none">
             <td id="imgTd">
                 {% if product.img%}
-                <img src="/static/img/products/{{product.img[0]}}" class="admin-img-delete"
+                <img src="/static/img/products/{{product.get_img()[0]}}" class="admin-img-delete"
                     alt="404 картинка не нашлась(">
                 {%else%}
                 <img class="admin-img-delete" src="/static/img/products/none.jpg" alt="404 картинка не нашлась(" />
