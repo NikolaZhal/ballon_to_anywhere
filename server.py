@@ -940,8 +940,7 @@ def user_make_order():
     form = MakeOrder()
     db_sess = db_session.create_session()
     products = (
-        db_sess.query(Products).filter(Products.id.in_([int(i) for i in content])).all()
-    )
+        db_sess.query(Products).filter(Products.id.in_([int(i) for i in content])).all())
     cost = sum([(i.cost - i.sale) * content[str(i.id)] for i in products])
     content = {int(i): content[i] for i in content}
     if form.validate_on_submit():
