@@ -3,7 +3,7 @@ from flask import request, jsonify, abort, redirect
 from data import db_session
 from flask import session
 from data.products import Products
-from data.types import Types
+from data.balloon_types import Types
 from data.users import User
 from data.orders import Order
 import ast

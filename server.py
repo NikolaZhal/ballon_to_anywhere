@@ -30,7 +30,7 @@ from data.comments import Comments
 from data.orders import Order
 from data.products import Products
 from data.products_group import ProductGroup
-from data.types import Types
+from data.balloon_types import Types
 from data.users import User
 from email_sender import send_email
 from forms.orders import BasketForm, MakeOrder
