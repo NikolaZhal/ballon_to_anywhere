@@ -7,8 +7,7 @@ from .db_session import SqlAlchemyBase
 
 class Comments(SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'comments'
-    id = sqlalchemy.Column(sqlalchemy.Integer,
-                           primary_key=True, autoincrement=True)
+    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
 
     content = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     plus = sqlalchemy.Column(sqlalchemy.String, nullable=True)
